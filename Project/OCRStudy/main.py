@@ -7,6 +7,8 @@ from APIs.HCXwords import make_words
 from Study.Dictation import dictation_mode
 from APIs.ClovaVoice import naver_tts
 from Study.Reading import reading
+from Study.Writing import writing_mode
+
 
 timestamp=str(math.floor(datetime.now().timestamp()))
 
@@ -49,7 +51,7 @@ while True:
         # Dictation 모드 실행
         dictation_mode(input_json=f'saves/save2_extracted{timestamp}.json', output_folder='saves/voices')
     elif StudyType=='w':
-        writing=1
+        writing_mode(timestamp)
     elif StudyType=='q':
         print("학습을 종료합니다.")
         break

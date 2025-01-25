@@ -9,7 +9,7 @@ input = userInput
 
 from APIs.Feedback import feedback
 
-log_path = "/data/ephemeral/home/level4-cv-finalproject-hackathon-cv-10-lv3/Project/ImageStudy/chatlog.txt"
+log_path = "/data/ephemeral/home/level4-cv-finalproject-hackathon-cv-10-lv3/Project/ImageStudy/logfile/chatlog.txt"
 
 with open('config.yaml', 'r') as f:
     config = yaml.full_load(f)

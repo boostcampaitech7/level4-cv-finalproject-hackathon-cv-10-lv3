@@ -2,7 +2,7 @@ import time
 
 from APIs.Feedback import feedback_for_diary
 
-log_path = "/data/ephemeral/home/level4-cv-finalproject-hackathon-cv-10-lv3/Project/ImageStudy/diarylog.txt"
+log_path = "/data/ephemeral/home/level4-cv-finalproject-hackathon-cv-10-lv3/Project/ImageStudy/logfile/diarylog.txt"
 
 def diary():
     with open(log_path, 'a', encoding='utf-8') as logfile:

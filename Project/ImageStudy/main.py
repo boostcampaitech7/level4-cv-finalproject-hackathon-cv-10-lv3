@@ -1,4 +1,5 @@
 from .Study.Chat import chat
+from .Study.Diary import diary
 
 # 1.image 촬영/불러오기
 ImagePath='/data/ephemeral/home/clova/img/image1.jpg'
@@ -12,7 +13,7 @@ while True:
     if StudyType=="c":
         chat(ImagePath)
     elif StudyType=='d':
-        print("준비중")
+        diary()
     elif StudyType=='q':
         print("학습을 종료합니다.")
         break

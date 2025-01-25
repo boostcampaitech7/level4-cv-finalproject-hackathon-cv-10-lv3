@@ -49,9 +49,9 @@ def generate_alt_text(image_path: str) -> str:
     return generated_texts[0]
 
 
-def img_alt(image_number):
-    image_path = f"/data/ephemeral/home/clova/img/image{image_number}.jpg"
-    output_path = f"/data/ephemeral/home/clova/img/image{image_number}_alt_text.txt"
+def img_alt(image_name):
+    image_path = f"/data/ephemeral/home/clova/img/{image_name}.jpg"
+    output_path = f"/data/ephemeral/home/clova/img/{image_name}_alt_text.txt"
 
     # Generate alt text
     alt_text = generate_alt_text(image_path)

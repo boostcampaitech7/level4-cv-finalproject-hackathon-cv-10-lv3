@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 import time
 
 from APIs.Feedback import feedback_for_diary

@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 import time
 from APIs import img_alt
 import os

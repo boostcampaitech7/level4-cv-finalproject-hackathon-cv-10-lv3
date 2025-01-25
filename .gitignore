@@ -1,9 +1,9 @@
 #내폴더에서 제외할것
 DATASET/
-chatlog.txt
 
 #r공통 제외
 __pycache__/
 config.yaml
 testimage/
 saves/
+logfile/

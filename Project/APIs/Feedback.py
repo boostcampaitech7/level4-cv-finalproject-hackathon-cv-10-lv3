@@ -1,4 +1,4 @@
-from APIs.HCXExecutor import CompletionExecutor
+from APIs.HCXexecutor import CompletionExecutor
 import yaml
 
 with open('config.yaml', 'r') as f:

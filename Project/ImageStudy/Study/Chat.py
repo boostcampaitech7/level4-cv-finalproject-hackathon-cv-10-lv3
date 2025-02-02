@@ -3,11 +3,11 @@ from APIs import img_alt
 import os
 import yaml
 
-from APIs.HCXExecutor import CompletionExecutor
-from APIs.UserInput import userInput
+from APIs.HCXexecutor import CompletionExecutor
+from Project.APIs.user_input import userInput
 input = userInput
 
-from APIs.Feedback import feedback
+from APIs.feedback import feedback
 
 log_path = "/data/ephemeral/home/level4-cv-finalproject-hackathon-cv-10-lv3/Project/ImageStudy/logfile/chatlog.txt"
 
@@ -16,6 +16,7 @@ with open('config.yaml', 'r') as f:
 HOST = config["HCX_host"]
 API_KEY = config["HCX_api_key"]
 REQUEST_ID = config["HCX_request_id"]
+
 
 def chat(image):
     with open(log_path, 'a', encoding='utf-8') as logfile:

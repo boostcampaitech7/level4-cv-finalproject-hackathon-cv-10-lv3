@@ -1,8 +1,8 @@
 import os
 import json
 import pygame
-from APIs.UserInput import userInput
-from APIs.ClovaVoice import naver_tts
+from Project.APIs.user_input import userInput
+from Project.APIs.clova_voice import naver_tts
 
 
 def play_voice(voice_file):

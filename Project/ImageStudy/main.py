@@ -1,5 +1,6 @@
-from .Study.Chat import chat
-from .Study.Diary import diary
+from .Study.chat import chat
+from .Study.diary import diary
+
 
 # 1.image 촬영/불러오기
 ImagePath='/data/ephemeral/home/clova/img/image1.jpg'

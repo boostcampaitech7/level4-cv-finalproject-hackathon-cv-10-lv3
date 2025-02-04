@@ -1,43 +1,44 @@
 from datetime import datetime
 import math
-from APIs.ClovaOCR import OCR
-from APIs.ClovaPapago import Translate
+from APIs.clova_OCR import OCR
+from Project.APIs.clova_papago import translate
 from APIs.HCXtunning import hcx_tunning
 from APIs.HCXwords import make_words
-from Study.Dictation import dictation_mode
-from APIs.ClovaVoice import naver_tts
-from Study.Reading import reading
-from Study.Writing import writing_mode
+from Study.dictation import dictation_mode
+from Project.APIs.clova_voice import naver_tts
+from Study.reading import reading
+from Study.writing import writing_mode
 
 
-timestamp=str(math.floor(datetime.now().timestamp()))
+timestamp = str(math.floor(datetime.now().timestamp()))
 
 
 # 1.문학/비문학 선택
 print("문학일 경우 1, 비문학일 경우 2를 입력하세요.")
-TextType=input().strip()
+TextType = input().strip()
 
 # 2.image 촬영/불러오기
-ImagePath='testimage/image5.jpg'
+ImagePath = "testimage/image5.jpg"
 
 # 3.OCR
-OCR(ImagePath,timestamp)
-
+OCR(ImagePath, timestamp)
 
 # 4.번역
-Translate(timestamp)
+translate(timestamp)
 
 # 5.번역 튜닝
-if TextType=='1':
+if TextType == "1":
     hcx_tunning(timestamp)
-elif TextType=='2':
+elif TextType == "2":
     hcx_tunning(timestamp)
 
 # 6.단어장 만들기
 make_words(timestamp)
 
 # 7. 음성 파일 생성 (필요 시)
-naver_tts(input_json=f'saves/save2_extracted{timestamp}.json', output_folder='saves/voices')
+naver_tts(
+    input_json=f"saves/save2_extracted{timestamp}.json", output_folder="saves/voices"
+)
 
 # 8.학습선택
 while True:
@@ -45,14 +46,17 @@ while True:
     print("읽기-R, 듣기-L, 쓰기-W, 종료-Q")
     StudyType = input().strip().lower()
 
-    if StudyType=="r":
-        reading(timestamp, voice_folder='saves/voices')
-    elif StudyType=='l':
+    if StudyType == "r":
+        reading(timestamp, voice_folder="saves/voices")
+    elif StudyType == "l":
         # Dictation 모드 실행
-        dictation_mode(input_json=f'saves/save2_extracted{timestamp}.json', output_folder='saves/voices')
-    elif StudyType=='w':
+        dictation_mode(
+            input_json=f"saves/save2_extracted{timestamp}.json",
+            output_folder="saves/voices",
+        )
+    elif StudyType == "w":
         writing_mode(timestamp)
-    elif StudyType=='q':
+    elif StudyType == "q":
         print("학습을 종료합니다.")
         break
     else:

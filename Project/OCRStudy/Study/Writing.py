@@ -1,6 +1,6 @@
 import os
 import json
-from APIs.UserInput import userInput
+from Project.APIs.user_input import get_user_input
 from APIs.feedback import feedback
 
 def writing_mode(timestamp):
@@ -39,7 +39,7 @@ def writing_mode(timestamp):
 
     # 3. 유저의 영어 답변 입력 받기
     print("\n선택된 문장에 대한 답변을 영어로 작성하세요:")
-    user_answer = userInput()
+    user_answer = get_user_input()
 
     # 4. 선택한 문장의 원문 영어 문장 보여주기
     if os.path.exists(input_json):

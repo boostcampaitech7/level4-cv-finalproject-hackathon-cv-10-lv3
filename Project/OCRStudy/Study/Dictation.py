@@ -1,8 +1,8 @@
 import os
 import json
 import pygame
-from APIs.UserInput import userInput
-from APIs.ClovaVoice import naver_tts
+from Project.APIs.user_input import get_user_input
+from Project.APIs.clova_voice import naver_tts
 
 
 def play_voice(voice_file):
@@ -65,7 +65,7 @@ def dictation_mode(input_json='extracted.json', output_folder='saves/voices'):
 
             # 유저 입력 받기
             print("\n문장에 대한 Dictation을 작성하세요.")
-            user_input = userInput()
+            user_input = get_user_input()
 
             # 결과 출력
             print("\n--- Result ---")

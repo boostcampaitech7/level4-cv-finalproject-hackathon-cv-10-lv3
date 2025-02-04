@@ -1,2 +1,2 @@
-from .Chat import chat
-from .Diary import diary
+from .chat import chat
+from .diary import diary

@@ -2,6 +2,7 @@ import yaml
 import requests
 import json
 
+
 with open('config.yaml', 'r') as f:
     config = yaml.full_load(f)
 HOST = config["HCX_host"]
@@ -103,7 +104,7 @@ def make_words(timestamp):
         dictionary = []
 
         for line in lines:
-            if not line.startswith("[word:"):  # 잘못된 줄 무시 -> 재요청으로 변경애햐ㅏㅁ.
+            if not line.startswith("[word:"):  # 잘못된 줄 무시 -> 재요청으로 변경해야함.
                 continue
             line = line.strip("[]")  # 대괄호 제거
             pairs = line.split(",")  # key-value 쌍 분리
@@ -117,9 +118,6 @@ def make_words(timestamp):
         word_list.append({"original":sentence, "words": dictionary})
 
 
-
-
     # 번역 결과 리스트를 JSON으로 저장 
     save_json_file(output_file, word_list)
-
     print("Extract words! completed. Results saved to:", output_file)

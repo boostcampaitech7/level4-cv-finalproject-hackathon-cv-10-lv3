@@ -1,6 +1,6 @@
 import time
 
-from APIs.Feedback import feedback_for_diary
+from APIs.feedback import feedback_for_diary
 
 log_path = "/data/ephemeral/home/level4-cv-finalproject-hackathon-cv-10-lv3/Project/ImageStudy/logfile/diarylog.txt"
 

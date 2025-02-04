@@ -45,7 +45,7 @@ def translate_sentence_by_sentence(text_list, source_language="en", target_langu
     return translated_sentences
 
 
-def Translate(timestamp):
+def translate(timestamp):
     input_file = f"saves/save2_extracted{timestamp}.json" #input파일!
     output_file = f"saves/save3_translation{timestamp}.json" # output파일!
 

@@ -2,7 +2,7 @@ from Project.APIs.input_utils.clova_speech import ClovaSpeechClient
 from APIs.input_utils.record import record_audio
 
 
-def userInput():
+def get_user_input():
     print("입력 형식을 알려주세요.")
     print("텍스트는 't', 음성은 'v'를 입력하세요.")
     input_type = input().strip().lower()
@@ -44,7 +44,7 @@ def userInput():
 
 
 if __name__ == "__main__":
-    user_input = userInput()
+    user_input = get_user_input()
     while user_input == None:
-        user_input = userInput()
+        user_input = get_user_input()
     print(f"최종 입력: {user_input}")

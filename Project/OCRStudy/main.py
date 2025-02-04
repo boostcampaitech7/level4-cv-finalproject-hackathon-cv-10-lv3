@@ -1,7 +1,7 @@
 from datetime import datetime
 import math
 from APIs.clova_OCR import OCR
-from Project.APIs.clova_papago import Translate
+from Project.APIs.clova_papago import translate
 from APIs.HCXtunning import hcx_tunning
 from APIs.HCXwords import make_words
 from Study.dictation import dictation_mode
@@ -24,7 +24,7 @@ ImagePath = "testimage/image5.jpg"
 OCR(ImagePath, timestamp)
 
 # 4.번역
-Translate(timestamp)
+translate(timestamp)
 
 # 5.번역 튜닝
 if TextType == "1":

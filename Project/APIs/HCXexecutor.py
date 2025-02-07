@@ -4,6 +4,8 @@ import yaml
 
 with open('config.yaml', 'r') as f:
     config = yaml.full_load(f)
+
+    
 HOST = config["HCX_host"]
 API_KEY = config["HCX_api_key"]
 REQUEST_ID = config["HCX_request_id"]

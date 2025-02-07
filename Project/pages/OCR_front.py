@@ -11,6 +11,11 @@ from OCRStudy.Study.Dictation import dictation_mode
 from OCRStudy.Study.Reading import reading
 from OCRStudy.Study.Writing import writing_mode
 import os
+from footer import footer
+from streamlit_config import set_global_config  # 설정 파일에서 설정을 가져오기
+
+# 글로벌 설정 호출
+set_global_config()
 
 # Step 상태 초기화
 if "current_step" not in st.session_state:
@@ -128,3 +133,5 @@ def main():
         
 if __name__ == "__main__":
     main()
+
+footer()

@@ -26,7 +26,7 @@ def dictation_mode(input_json='extracted.json', output_folder='saves/voices'):
         st.session_state.Dictation_is_finished = False
     
     if "current_step" in st.session_state:
-        st.session_state.current_step = 10  # 학습 모드 선택 화면이 다시 안 뜨도록 함
+        st.session_state.current_step = 5  # 학습 모드 선택 화면이 다시 안 뜨도록 함
     
     # ✅ 학습 종료 상태 처리
     if st.session_state.Dictation_is_finished:
@@ -80,7 +80,7 @@ def dictation_mode(input_json='extracted.json', output_folder='saves/voices'):
         with col2:
             if st.button("🕵️ 학습 모드로 돌아가기", use_container_width=True):
                 st.session_state.Dictation_change_mode = True  
-                st.session_state.current_step = 8  # 학습 모드 선택 화면으로 변경
+                st.session_state.current_step = 3  # 학습 모드 선택 화면으로 변경
                 st.rerun()
         with col3:
             if st.button("❌ 학습 종료", use_container_width=True):
@@ -90,7 +90,7 @@ def dictation_mode(input_json='extracted.json', output_folder='saves/voices'):
         # 📌 메인 페이지로 돌아가는 버튼 추가
         st.divider()
         if st.button("⬅️ 홈 화면으로 돌아가기", use_container_width=True):
-            st.session_state.current_step = 8  # OCR 학습 모드 선택 화면으로 가게 함
+            st.session_state.current_step = 3  # OCR 학습 모드 선택 화면으로 가게 함
             st.session_state.Dictation_selected_sentence_idx = None
             st.session_state.Dictation_change_mode = False
             st.session_state.Dictation_is_finished = False

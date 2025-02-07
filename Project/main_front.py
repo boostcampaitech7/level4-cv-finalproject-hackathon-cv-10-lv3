@@ -8,8 +8,8 @@ set_global_config()
 
 # 서비스 소개
 st.title("📷 스내핑 (SnapEng)")
-st.markdown("#### 📢 일상의 순간이 영어 공부로 변신하는 하루 한 장의 기적")
-st.markdown("**🎯 키워드:** 영어 학습, 하루 한 장, 개인화된 학습 컨텐츠")
+st.markdown("#### 🖼️ 일상의 순간이 나만의 영어 공부로 변하는 하루 한 장의 기적")
+st.markdown("내 일상을, 내 관심사를 바탕으로 영어를 보다 가볍게 가까이서 배워보아요.")
 
 st.divider()
 
@@ -56,6 +56,8 @@ quotes = [
 quote, translation = random.choice(quotes)
 
 st.markdown("### 💡 오늘의 영어 명언")
-st.info(f"{quote}\n\n📢 **한국어 해석:** {translation}")
+st.info(f"{quote}\n\n📢 **해석\:** {translation}")
+
+st.markdown("✅ 오늘의 목표: **이 문장을 소리 내어 3번 읽어보아요** 🗣️🔥")
 
 footer()  # footer 출력

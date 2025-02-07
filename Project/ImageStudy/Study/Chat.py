@@ -53,17 +53,18 @@ def chat(timestamp):
     )
 
     image_alt_path = f"uploads/image_{timestamp}_alt_text.txt"
+    image_path = f"uploads/image_{timestamp}.jpg"
 
     # 이미지 대체 텍스트 가져오기
     if os.path.isfile(image_alt_path):
         with open(image_alt_path, 'r', encoding='utf-8') as f:
             initial_input = f.read()
     else:
-        initial_input = img_alt(timestamp)  # 자동 생성
+        initial_input = img_alt(timestamp)
 
     # 첫 대화 시작: 챗봇이 먼저 반응
     if not st.session_state.chat_history:
-        st.session_state.chat_history.append(("📷 Image Description:", initial_input))
+        st.session_state.chat_history.append(("📷 Image:", image_path))
 
         preset_text = [{"role":"system","content":"사용자의 가장 처음 입력으로 이미지의 대체 텍스트가 들어옵니다. 시스템은 해당 설명을 바탕으로 이미지를 보고 친구와 이야기하는 것처럼 대화를 시작합니다. 이미지는 사용자가 오늘 보낸 하루와 관련이 있습니다. 적절한 질문을 제시하고, 사용자의 답변에 반응하시오. 대화는 영어로 진행합니다. 줄바꿈을 사용하지 말고 한 문단으로 대화하시오."},{"role": "user", "content": initial_input}]
         
@@ -71,7 +72,7 @@ def chat(timestamp):
             'messages': preset_text,
             'topP': 0.8,
             'topK': 0,
-            'maxTokens': 100,
+            'maxTokens': 120,
             'temperature': 0.6,
             'repeatPenalty': 5.0,
             'stopBefore': [],
@@ -82,8 +83,12 @@ def chat(timestamp):
         st.session_state.chat_history.append(("🤖 Chatbot:", chatbot_response))
 
     # UI에 대화 내역 출력
-    for role, text in st.session_state.chat_history:
-        st.write(f"**{role}**: {text}")
+    for role, content in st.session_state.chat_history:
+        if role == "📷 Image:":
+            st.write(role)
+            st.image(content, width=400)
+        else:
+            st.write(role, content)
 
     # 대화 횟수 제한 체크
     if st.session_state.chat_turns >= MAX_TURNS:

@@ -1,11 +1,20 @@
 import requests
 import json
+import yaml
+
+with open('config.yaml', 'r') as f:
+    config = yaml.full_load(f)
+    
+HOST = config["HCX_host"]
+API_KEY = config["HCX_api_key"]
+REQUEST_ID = config["HCX_request_id"]
+
 
 class CompletionExecutor:
-    def __init__(self, host, api_key, request_id):
-        self._host = host
-        self._api_key = api_key
-        self._request_id = request_id
+    def __init__(self):
+        self._host = HOST
+        self._api_key = API_KEY
+        self._request_id = REQUEST_ID
 
     def execute(self, completion_request):
         headers = {

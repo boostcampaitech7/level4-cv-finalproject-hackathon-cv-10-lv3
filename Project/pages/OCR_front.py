@@ -2,7 +2,7 @@ import streamlit as st
 from datetime import datetime
 import math
 from APIs.clova_OCR import OCR
-from APIs.clova_papago import Translate
+from APIs.clova_papago import translate
 from APIs.HCXtunning import hcx_tunning
 from APIs.HCXwords import make_words
 from APIs.clova_voice import naver_tts
@@ -88,7 +88,7 @@ def main():
         if st.session_state.current_step == 4:
             st.header("4. 번역")
             with st.spinner("텍스트 번역 중..."):
-                Translate(st.session_state.timestamp)
+                translate(st.session_state.timestamp)
             st.success("번역이 완료되었습니다!")
             st.session_state.current_step += 1
 

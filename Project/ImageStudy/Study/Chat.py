@@ -14,7 +14,7 @@ HOST = config["HCX_host"]
 API_KEY = config["HCX_api_key"]
 REQUEST_ID = config["HCX_request_id"]
 
-MAX_TURNS = 10  # 대화 횟수 제한
+MAX_TURNS = 11  # 대화 횟수 제한
 
 def chat(timestamp):
     st.title("🖼️ Chat Mode")
@@ -46,6 +46,25 @@ def chat(timestamp):
         st.success("🎉 학습이 종료되었습니다. 오늘도 수고하셨습니다!")
         return
     
+    if "preset_text" not in st.session_state:
+        st.session_state.preset_text = [
+            {"role":"system","content":"사용자의 가장 처음 입력으로 이미지의 대체 텍스트가 들어옵니다. 시스템은 해당 설명을 바탕으로 이미지를 보고 친구와 이야기하는 것처럼 대화를 시작합니다. 이미지는 사용자가 오늘 보낸 하루와 관련이 있습니다. 적절한 질문을 제시하고, 사용자의 답변에 반응하시오. 대화는 영어로 진행합니다. 줄바꿈을 사용하지 말고 한 문단으로 대화하시오."},
+            {"role": "user", "content": None}
+        ]
+    
+    preset_text = st.session_state.preset_text
+
+    request_data = {
+    'messages': preset_text,
+    'topP': 0.8,
+    'topK': 0,
+    'maxTokens': 100,
+    'temperature': 0.6,
+    'repeatPenalty': 5.0,
+    'stopBefore': [],
+    'includeAiFilters': True
+}
+
     completion_executor = CompletionExecutor(
         host=HOST,
         api_key=API_KEY,
@@ -62,26 +81,15 @@ def chat(timestamp):
     else:
         initial_input = img_alt(timestamp)
 
-    # 챗봇 응답 요청
-    preset_text = [{"role":"system","content":"사용자의 가장 처음 입력으로 이미지의 대체 텍스트가 들어옵니다. 시스템은 해당 설명을 바탕으로 이미지를 보고 친구와 이야기하는 것처럼 대화를 시작합니다. 이미지는 사용자가 오늘 보낸 하루와 관련이 있습니다. 적절한 질문을 제시하고, 사용자의 답변에 반응하시오. 대화는 영어로 진행합니다. 줄바꿈을 사용하지 말고 한 문단으로 대화하시오."},{"role": "user", "content": initial_input}]
-
-    request_data = {
-        'messages': preset_text,
-        'topP': 0.8,
-        'topK': 0,
-        'maxTokens': 100,
-        'temperature': 0.6,
-        'repeatPenalty': 5.0,
-        'stopBefore': [],
-        'includeAiFilters': True
-    }
+    preset_text[1]['content'] = initial_input
 
     # 첫 대화 시작: 챗봇이 먼저 반응
     if not st.session_state.chat_history:
         st.session_state.chat_history.append(("📷 Image:", image_path))
 
-        chatbot_response = completion_executor.execute(request_data)
-        st.session_state.chat_history.append(("🤖 Chatbot:", chatbot_response))
+        response = completion_executor.execute(request_data)
+        preset_text.append({"role": "assistant", "content": response})
+        st.session_state.chat_history.append(("🤖 Chatbot:", response))
 
     # UI에 대화 내역 출력
     for role, content in st.session_state.chat_history:
@@ -104,12 +112,12 @@ def chat(timestamp):
     with col1:
         if st.button("Send"):
             if user_input.strip():
-                st.session_state.chat_history.append(("🙋 You:", user_input))
                 preset_text.append({"role": "user", "content": user_input})
+                st.session_state.chat_history.append(("🙋 You:", user_input))
                 
                 response = completion_executor.execute(request_data)
-                st.session_state.chat_history.append(("🤖 Chatbot:", response))
                 preset_text.append({"role": "assistant", "content": response})
+                st.session_state.chat_history.append(("🤖 Chatbot:", response))
 
                 st.session_state.chat_turns += 1
                 st.rerun()
@@ -117,19 +125,23 @@ def chat(timestamp):
     with col2:
         if st.button("Retry"):
             if st.session_state.chat_history:
-                st.session_state.chat_history.pop()  # 마지막 챗봇 응답 제거
                 preset_text.pop()
+                st.session_state.chat_history.pop()  # 마지막 챗봇 응답 제거
 
                 response = completion_executor.execute(request_data)
+                preset_text.append({"role": "assistant", "content": response})
                 st.session_state.chat_history.append(("🤖 Chatbot:", response))
                 st.rerun()
 
     with col3:
         if st.button("Feedback"):
             if st.session_state.chat_history:
-                last_user_response = st.session_state.chat_history[-1][1]
-                feedback_text = feedback(last_user_response)  # 인자 하나만 전달하도록 수정
+                last_user_response = preset_text[len(preset_text) - 2]["content"]
+                feedback_text = feedback(last_user_response)
                 st.write(f"📝 Feedback: {feedback_text}")
+                
+                # preset_text 업데이트
+                print(st.session_state.preset_text)
 
     # 종료 버튼 추가
     col1, col2 = st.columns(2)

@@ -53,4 +53,4 @@ quote, translation = random.choice(quotes)
 st.markdown("### 💡 오늘의 영어 명언")
 st.info(f"{quote}\n\n📢 **한국어 해석:** {translation}")
 
-st.markdown("✅ 오늘의 목표: **이 문장을 소리 내어 3번 읽어보기!** 🗣️🔥")
+footer()  # footer 출력

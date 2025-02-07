@@ -94,3 +94,14 @@ def reading(timestamp, voice_folder='saves/voices'):
     if st.button("❌ 학습 종료", use_container_width=True):
         st.session_state.Reading_is_finished = True
         st.rerun()  # 화면 즉시 갱신
+
+    # 📌 메인 페이지로 돌아가는 버튼 추가
+    st.divider()
+    if st.button("⬅️ 홈 화면으로 돌아가기", use_container_width=True):
+        st.session_state.current_step = 8  # OCR 학습 모드 선택 화면으로 가게 함
+        st.session_state.pop("current_idx", None)  # 문장 인덱스 초기화
+        st.session_state.current_idx = 0
+        st.session_state.Reading_change_mode = False
+        st.session_state.Reading_is_finished = False
+        
+        st.switch_page("main_front.py")  # 메인 페이지로 이동

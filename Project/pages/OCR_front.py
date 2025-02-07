@@ -92,7 +92,7 @@ def main():
         if st.session_state.current_step == 4:
             st.header("4. 번역")
             with st.spinner("텍스트 번역 중..."):
-                Translate(st.session_state.timestamp)
+                translate(st.session_state.timestamp)
             st.success("번역이 완료되었습니다!")
             st.session_state.current_step += 1
 
@@ -141,6 +141,5 @@ def main():
         
 if __name__ == "__main__":
     main()
-
 
 footer()

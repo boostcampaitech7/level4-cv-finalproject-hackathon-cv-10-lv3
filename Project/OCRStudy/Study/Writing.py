@@ -1,63 +1,103 @@
 import os
 import json
-from Project.APIs.user_input import get_user_input
-from APIs.feedback import feedback
+import streamlit as st
+from APIs.Feedback import feedback
+from APIs.user_input import userInput
 
 def writing_mode(timestamp):
-    """
-    Writing 모드: 문장 번역, 선택 및 답변 작성 후 피드백 제공
-    
-    """
-    
     input_json = f"saves/save2_extracted{timestamp}.json"
-    output_json = f"saves/save3_translation{timestamp}.json" # Use only Papago
+    output_json = f"saves/save3_translation{timestamp}.json"
 
-    # 2. output_json에서 문장 선택 및 유저에게 선택된 문장 보여주기
+    st.title("Writing Mode")
+    
+    # ✅ 학습을 새로 시작할 때 상태 초기화
+    if "Writing_change_mode" in st.session_state and st.session_state.Writing_change_mode:
+        st.session_state.Writing_selected_sentence_idx = None
+        st.session_state.Writing_change_mode = False
+        st.session_state.Writing_is_finished = False
+    
+    # 상태 초기화
+    if "Writing_selected_sentence_idx" not in st.session_state:
+        st.session_state.Writing_selected_sentence_idx = None
+    if "Writing_change_mode" not in st.session_state:
+        st.session_state.Writing_change_mode = False  
+    if "Writing_is_finished" not in st.session_state:
+        st.session_state.Writing_is_finished = False
+        
+    if "current_step" in st.session_state:
+        st.session_state.current_step = 11
+    
+    # ✅ 학습 종료 상태 처리
+    if st.session_state.Writing_is_finished:
+        st.success("🎉 학습이 종료되었습니다. 오늘도 수고하셨습니다!")
+        return  # 학습이 완전히 종료되었으므로 더 이상 실행하지 않음
+
+    # 번역된 문장 목록 로드
     if not os.path.exists(output_json):
-        print(f"Error: {output_json} 파일이 존재하지 않습니다.")
+        st.error(f"{output_json} 파일이 존재하지 않습니다.")
         return
 
     with open(output_json, "r", encoding="utf-8") as f:
         translations = json.load(f)
+    
+    # ✅ 문장 선택이 아직 안 되었으면 리스트 출력
+    if st.session_state.Writing_selected_sentence_idx is None:
+        sentence_list = [f"{idx+1}. {item['translation']}" for idx, item in enumerate(translations)]
+        
+        # Markdown으로 출력
+        st.markdown("### 문장 목록:")
+        st.markdown("\n".join(sentence_list))
+        
+        selected_idx = st.selectbox("원하는 문장을 선택하세요:", options=range(len(sentence_list)), format_func=lambda x: sentence_list[x])
 
-    print("번역된 문장 목록:")
-    for idx, item in enumerate(translations):
-        print(f"{idx + 1}. {item['translation']}")
+        if st.button("문장 선택"):
+            st.session_state.Writing_selected_sentence_idx = selected_idx
+            st.success("✅ 문장 선택 완료! 잠시 후 입력 창이 나타납니다.")
+            st.rerun()  # UI 갱신
 
-    print("\n원하는 문장의 번호를 입력하세요 (1부터 시작):")
-    try:
-        selected_idx = int(input().strip()) - 1
-        if selected_idx < 0 or selected_idx >= len(translations):
-            print("잘못된 번호입니다. 프로그램을 종료합니다.")
-            return
-    except ValueError:
-        print("잘못된 입력입니다. 프로그램을 종료합니다.")
-        return
-
-    selected_translation = translations[selected_idx]
-    print(f"\n선택된 문장 (번역): {selected_translation['translation']}")
-
-    # 3. 유저의 영어 답변 입력 받기
-    print("\n선택된 문장에 대한 답변을 영어로 작성하세요:")
-    user_answer = get_user_input()
-
-    # 4. 선택한 문장의 원문 영어 문장 보여주기
-    if os.path.exists(input_json):
-        with open(input_json, "r", encoding="utf-8") as f:
-            original_sentences = json.load(f)
-
-        if selected_idx < len(original_sentences):
-            original_sentence = original_sentences[selected_idx]
-            print(f"\n선택한 문장의 원문 영어 문장: {original_sentence}")
-        else:
-            print("\n원문 영어 문장을 찾을 수 없습니다.")
+    # ✅ 문장이 선택된 경우, 리스트를 숨기고 사용자 입력 진행
     else:
-        print(f"\n'{input_json}' 파일이 존재하지 않습니다.")
+        selected_translation = translations[st.session_state.Writing_selected_sentence_idx]
+        st.markdown(f"##### 선택된 문장: {selected_translation['translation']}")
 
-    # 5. 피드백 제공
-    print("\n입력하신 답변에 대한 피드백을 제공합니다:")
-    feedback(user_answer)
+        st.write("📌 선택된 문장에 대해 영어로 답변을 작성하세요.")
+        user_answer = userInput()
+        
+        # ✅ 사용자의 답변을 입력한 후 원문 영어 문장을 보여줌
+        if user_answer:
+            st.write("**Your Answer:**", user_answer)
 
-if __name__ == "__main__":
-    # Writing 모드 실행
-    writing_mode(timestamp)
+            # 원문 영어 문장 출력
+            if os.path.exists(input_json):
+                with open(input_json, "r", encoding="utf-8") as f:
+                    original_sentences = json.load(f)
+
+                if st.session_state.Writing_selected_sentence_idx < len(original_sentences):
+                    original_sentence = original_sentences[st.session_state.Writing_selected_sentence_idx]
+                    st.write(f"**Original Sentence:** {original_sentence}")
+                else:
+                    st.error("원문 영어 문장을 찾을 수 없습니다.")
+            else:
+                st.error(f"\n'{input_json}' 파일이 존재하지 않습니다.")
+
+        # ✅ 피드백 버튼
+        # 피드백도 saves 폴더에 feedback으로 저장해둬서 feedback 누를 때마다 바뀌지 않도록 수정 # 비즈니스 관점으로 볼 때 request를 한 번만 보내는게 좋음 속도측면으로도
+        if st.button("💬 피드백 받기", use_container_width=True):
+            feedback_message = feedback(user_answer)
+            st.write("**Feedback:**", feedback_message)
+        
+        # 버튼 기반 작업
+        col1, col2, col3 = st.columns(3)
+        with col1:
+            if st.button("🔄 새로운 문장 선택", use_container_width=True):
+                st.session_state.Writing_selected_sentence_idx = None
+                st.rerun()
+        with col2:
+            if st.button("🕵️ 학습 모드로 돌아가기", use_container_width=True):
+                st.session_state.Writing_change_mode = True  
+                st.session_state.current_step = 8  # 학습 모드 선택 화면으로 변경
+                st.rerun()
+        with col3:
+            if st.button("❌ 학습 종료", use_container_width=True):
+                st.session_state.Writing_is_finished = True
+                st.rerun()

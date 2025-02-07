@@ -4,7 +4,7 @@ import tempfile
 import os
 import wave
 import numpy as np
-from APIs.input_utils.ClovaSpeech import ClovaSpeechClient
+from APIs.input_utils.clova_speech import ClovaSpeechClient
 
 def convert_webm_to_wav(webm_bytes, output_path):
     """ WebM 파일을 WAV로 변환하는 함수 """

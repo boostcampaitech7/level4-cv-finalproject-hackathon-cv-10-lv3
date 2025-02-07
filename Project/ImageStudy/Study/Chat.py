@@ -1,18 +1,10 @@
 import os
-import yaml
 import streamlit as st
 
 from APIs.image_alt import img_alt
 from APIs.HCXexecutor import CompletionExecutor
 from APIs.user_input import userInput
 from APIs.feedback import feedback
-
-# 설정 로드
-with open('config.yaml', 'r') as f:
-    config = yaml.full_load(f)
-HOST = config["HCX_host"]
-API_KEY = config["HCX_api_key"]
-REQUEST_ID = config["HCX_request_id"]
 
 MAX_TURNS = 11  # 대화 횟수 제한
 
@@ -65,11 +57,7 @@ def chat(timestamp):
     'includeAiFilters': True
 }
 
-    completion_executor = CompletionExecutor(
-        host=HOST,
-        api_key=API_KEY,
-        request_id=REQUEST_ID
-    )
+    completion_executor = CompletionExecutor()
 
     image_alt_path = f"uploads/image_{timestamp}_alt_text.txt"
     image_path = f"uploads/image_{timestamp}.jpg"

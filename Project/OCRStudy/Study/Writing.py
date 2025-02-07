@@ -1,7 +1,7 @@
 import os
 import json
 import streamlit as st
-from APIs.Feedback import feedback
+from APIs.feedback import feedback
 from APIs.user_input import userInput
 
 def writing_mode(timestamp):

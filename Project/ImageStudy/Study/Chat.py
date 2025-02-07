@@ -62,22 +62,23 @@ def chat(timestamp):
     else:
         initial_input = img_alt(timestamp)
 
+    # 챗봇 응답 요청
+    preset_text = [{"role":"system","content":"사용자의 가장 처음 입력으로 이미지의 대체 텍스트가 들어옵니다. 시스템은 해당 설명을 바탕으로 이미지를 보고 친구와 이야기하는 것처럼 대화를 시작합니다. 이미지는 사용자가 오늘 보낸 하루와 관련이 있습니다. 적절한 질문을 제시하고, 사용자의 답변에 반응하시오. 대화는 영어로 진행합니다. 줄바꿈을 사용하지 말고 한 문단으로 대화하시오."},{"role": "user", "content": initial_input}]
+
+    request_data = {
+        'messages': preset_text,
+        'topP': 0.8,
+        'topK': 0,
+        'maxTokens': 100,
+        'temperature': 0.6,
+        'repeatPenalty': 5.0,
+        'stopBefore': [],
+        'includeAiFilters': True
+    }
+
     # 첫 대화 시작: 챗봇이 먼저 반응
     if not st.session_state.chat_history:
         st.session_state.chat_history.append(("📷 Image:", image_path))
-
-        preset_text = [{"role":"system","content":"사용자의 가장 처음 입력으로 이미지의 대체 텍스트가 들어옵니다. 시스템은 해당 설명을 바탕으로 이미지를 보고 친구와 이야기하는 것처럼 대화를 시작합니다. 이미지는 사용자가 오늘 보낸 하루와 관련이 있습니다. 적절한 질문을 제시하고, 사용자의 답변에 반응하시오. 대화는 영어로 진행합니다. 줄바꿈을 사용하지 말고 한 문단으로 대화하시오."},{"role": "user", "content": initial_input}]
-        
-        request_data = {
-            'messages': preset_text,
-            'topP': 0.8,
-            'topK': 0,
-            'maxTokens': 120,
-            'temperature': 0.6,
-            'repeatPenalty': 5.0,
-            'stopBefore': [],
-            'includeAiFilters': True
-        }
 
         chatbot_response = completion_executor.execute(request_data)
         st.session_state.chat_history.append(("🤖 Chatbot:", chatbot_response))
@@ -105,19 +106,7 @@ def chat(timestamp):
             if user_input.strip():
                 st.session_state.chat_history.append(("🙋 You:", user_input))
 
-                preset_text = [{"role": "user", "content": user_input}]
-                
-                # 챗봇 응답 요청
-                request_data = {
-                    'messages': [{"role": role.lower(), "content": text} for role, text in st.session_state.chat_history],
-                    'topP': 0.8,
-                    'topK': 0,
-                    'maxTokens': 100,
-                    'temperature': 0.6,
-                    'repeatPenalty': 5.0,
-                    'stopBefore': [],
-                    'includeAiFilters': True
-                }
+                preset_text["content"] = user_input
                 
                 response = completion_executor.execute(request_data)
                 st.session_state.chat_history.append(("🤖 Chatbot:", response))
@@ -127,19 +116,8 @@ def chat(timestamp):
     with col2:
         if st.button("Retry"):
             if st.session_state.chat_history:
-                last_user_input = st.session_state.chat_history[-2][1]  # 마지막 사용자 입력
+                # last_user_input = st.session_state.chat_history[-2][1]  # 마지막 사용자 입력
                 st.session_state.chat_history.pop()  # 마지막 챗봇 응답 제거
-                
-                request_data = {
-                    'messages': [{"role": role.lower(), "content": text} for role, text in st.session_state.chat_history],
-                    'topP': 0.8,
-                    'topK': 0,
-                    'maxTokens': 100,
-                    'temperature': 0.6,
-                    'repeatPenalty': 5.0,
-                    'stopBefore': [],
-                    'includeAiFilters': True
-                }
 
                 response = completion_executor.execute(request_data)
                 st.session_state.chat_history.append(("🤖 Chatbot:", response))

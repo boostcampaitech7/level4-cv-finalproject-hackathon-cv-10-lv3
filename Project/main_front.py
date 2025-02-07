@@ -1,5 +1,10 @@
 import streamlit as st
 import random
+from streamlit_config import set_global_config  # 설정 파일에서 설정을 가져오기
+from footer import footer
+
+# 글로벌 설정 호출
+set_global_config()
 
 # 서비스 소개
 st.title("📷 스내핑 (SnapEng)")

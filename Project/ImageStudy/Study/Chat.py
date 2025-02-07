@@ -105,19 +105,20 @@ def chat(timestamp):
         if st.button("Send"):
             if user_input.strip():
                 st.session_state.chat_history.append(("🙋 You:", user_input))
-
-                preset_text["content"] = user_input
+                preset_text.append({"role": "user", "content": user_input})
                 
                 response = completion_executor.execute(request_data)
                 st.session_state.chat_history.append(("🤖 Chatbot:", response))
+                preset_text.append({"role": "assistant", "content": response})
+
                 st.session_state.chat_turns += 1
                 st.rerun()
 
     with col2:
         if st.button("Retry"):
             if st.session_state.chat_history:
-                # last_user_input = st.session_state.chat_history[-2][1]  # 마지막 사용자 입력
                 st.session_state.chat_history.pop()  # 마지막 챗봇 응답 제거
+                preset_text.pop()
 
                 response = completion_executor.execute(request_data)
                 st.session_state.chat_history.append(("🤖 Chatbot:", response))
@@ -126,8 +127,8 @@ def chat(timestamp):
     with col3:
         if st.button("Feedback"):
             if st.session_state.chat_history:
-                last_bot_response = st.session_state.chat_history[-1][1]
-                feedback_text = feedback(last_bot_response)  # 인자 하나만 전달하도록 수정
+                last_user_response = st.session_state.chat_history[-1][1]
+                feedback_text = feedback(last_user_response)  # 인자 하나만 전달하도록 수정
                 st.write(f"📝 Feedback: {feedback_text}")
 
     # 종료 버튼 추가

@@ -1,9 +1,12 @@
 import streamlit as st
 from datetime import datetime
 import math
+import time
 from APIs.clova_OCR import OCR
-from APIs.clova_papago import translate
+from APIs.translation import translation
 from APIs.clova_voice import naver_tts
+from APIs.rotate import ProcessFile
+from APIs.harmful import harmful
 from OCRStudy.Study.Dictation import dictation_mode
 from OCRStudy.Study.Reading import reading
 from OCRStudy.Study.Writing import writing_mode
@@ -59,13 +62,15 @@ def main():
 
             image_path = os.path.join(upload_folder, f"image_{timestamp}.jpg")
             
-            # 이미지 돌리는 코드 넣어주세요.
-
-            # 이미지 미세조정
-
-            # 이미지 저장
+            # 이미지 임시 저장
             with open(image_path, "wb") as f:
                 f.write(uploaded_image.getbuffer())
+
+            # 이미지 돌리는 코드 넣어주세요.
+
+            # 이미지 미세조정 후 저장
+            ProcessFile(image_path, image_path)
+            
             
             st.session_state.uploaded_image = uploaded_image
             st.session_state.timestamp = timestamp
@@ -80,11 +85,17 @@ def main():
         st.header("2. OCR 처리")
         with st.spinner("OCR을 수행 중입니다..."):
             OCR(st.session_state.image_path, st.session_state.timestamp)  # image_path 사용
+        # 유해성 검사
+        harm=harmful(timestamp)
+        if harm=="harmful":
+            st.error("⚠️ 유해한 이미지로 판단되었습니다. 메인화면으로 돌아갑니다.")  # 팝업 메시지 표시
+            time.sleep(3)
+            st.experimental_rerun()  # 화면을 리로드하여 메인으로 이동
         st.success("OCR 처리가 완료되었습니다!")
-
+        
         st.header("3. 번역")
         with st.spinner("텍스트 번역 중..."):
-            translate(st.session_state.timestamp)
+            translation(st.session_state.timestamp)
         st.success("번역이 완료되었습니다!")
 
         st.header("4. 음성 파일 생성")
@@ -99,13 +110,13 @@ def main():
         study_mode = st.radio("학습 모드를 선택하세요.", ("읽기 (Reading)", "듣기 (Dictation)", "쓰기 (Writing)"))
         if st.button("학습 시작"):
             if study_mode == "읽기 (Reading)":
-                st.session_state.current_step = 4  # Reading 모드로 들어가면 9로 변경
+                st.session_state.current_step = 4  # Reading 모드로 들어가면 4로 변경
                 reading(st.session_state.timestamp, voice_folder='saves/voices')
             elif study_mode == "듣기 (Dictation)":
-                st.session_state.current_step = 5  # Dictation 모드로 들어가면 10으로 변경
+                st.session_state.current_step = 5  # Dictation 모드로 들어가면 5으로 변경
                 dictation_mode(input_json=f'saves/save2_extracted{st.session_state.timestamp}.json', output_folder='saves/voices')
             elif study_mode == "쓰기 (Writing)":
-                st.session_state.current_step = 6  # Writing 모드로 들어가면 11로 변경
+                st.session_state.current_step = 6  # Writing 모드로 들어가면 6로 변경
                 writing_mode(st.session_state.timestamp)
                 
     elif st.session_state.current_step == 4:

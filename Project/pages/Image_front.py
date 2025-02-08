@@ -74,12 +74,12 @@ def main():
                 chat(st.session_state.timestamp)
             elif study_type == "Diary Mode":
                 st.session_state.current_step = 4
-                diary()
+                diary(st.session_state.timestamp)
 
     elif st.session_state.current_step == 3:
         chat(st.session_state.timestamp)
     elif st.session_state.current_step == 4:
-        diary()
+        diary(st.session_state.timestamp)
     
 if __name__ == "__main__":
     main()

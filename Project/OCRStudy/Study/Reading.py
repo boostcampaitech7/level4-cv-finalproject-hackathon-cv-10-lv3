@@ -77,36 +77,37 @@ def reading(timestamp, voice_folder='saves/voices'):
     # 단어장 보기 버튼
     # OCR_front.py 단어장 생성 코드 아래 버튼에 옮기기 
     if st.button("📚 단어장 보기", use_container_width=True):
-        #단어장 json파일이 있을 경우 idx에 맞는 단어장이 있는지 확인하기 없을 경우 단어장 만들기
-        idx=st.session_state.current_idx
-        if os.path.exists(words_path):
-            with open(words_path, "r", encoding="utf-8") as f:
-                data = json.load(f)
-                for item in data:
-                    if item.get("index") == idx:
-                        result=item
-                        break
-                    else:
-                        result=make_words(idx, current_sentence, timestamp)
-        else:
-            result=make_words(idx, current_sentence, timestamp)
-            data=[]
-        
-        dictionary =result["words"]
-        for dic in dictionary:
-            st.write(f"**Word:** {dic['word']}")
-            st.write(f"**Mean:** {dic['mean']}")
-            st.write(f"**Example:** {dic['example']}")
-            st.write(f"**Translation:** {dic['translate']}")
-            st.write("---")
-        pass
+        with st.spinner("단어장을 생성 중입니다..."):
+            #단어장 json파일이 있을 경우 idx에 맞는 단어장이 있는지 확인하기 없을 경우 단어장 만들기
+            idx=st.session_state.current_idx
+            if os.path.exists(words_path):
+                with open(words_path, "r", encoding="utf-8") as f:
+                    data = json.load(f)
+                    for item in data:
+                        if item.get("index") == idx:
+                            result=item
+                            break
+                        else:
+                            result=make_words(idx, current_sentence, timestamp)
+            else:
+                result=make_words(idx, current_sentence, timestamp)
+                data=[]
+            
+            dictionary =result["words"]
+            for dic in dictionary:
+                st.write(f"**Word:** {dic['word']}")
+                st.write(f"**Mean:** {dic['mean']}")
+                st.write(f"**Example:** {dic['example']}")
+                st.write(f"**Translation:** {dic['translate']}")
+                st.write("---")
+            pass
 
-        # 새 데이터를 리스트에 추가s
-        data.append(result)
+            # 새 데이터를 리스트에 추가s
+            data.append(result)
 
-        # JSON 파일에 저장
-        with open(words_path, "w", encoding="utf-8") as f:
-            json.dump(data, f, ensure_ascii=False, indent=4)
+            # JSON 파일에 저장
+            with open(words_path, "w", encoding="utf-8") as f:
+                json.dump(data, f, ensure_ascii=False, indent=4)
 
 
     if st.button("🕵️ 학습 모드로 돌아가기", use_container_width=True):

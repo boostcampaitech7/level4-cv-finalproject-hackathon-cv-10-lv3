@@ -8,6 +8,12 @@ HOST = config["HCX_host"]
 API_KEY = config["HCX_api_key"]
 REQUEST_ID = config["HCX_request_id"]
 
+#HCX 결과에서 잔인함, 차별, 선정적 값 계산 
+def sum_scores(data):
+    # aiFilter 리스트에서 score 값을 추출하여 합산
+    total_score = sum(int(filter_item["score"]) for filter_item in data.get("aiFilter", []))
+
+    return total_score
 
 class CompletionExecutor:
     def __init__(self):
@@ -39,6 +45,7 @@ class CompletionExecutor:
                             if message.startswith('data:'):
                                 data = json.loads(message[5:])
                                 content = data["message"]["content"]
+                                harmful_score = sum_scores(data)
                                 wrt = False
                         except json.JSONDecodeError as e:
                             print(f"Error parsing message: {e}")

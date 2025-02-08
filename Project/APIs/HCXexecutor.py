@@ -47,4 +47,4 @@ class CompletionExecutor:
                         except KeyError as e:
                             print(f"Missing key in message: {e}")
 
-        return content
+        return content.strip()

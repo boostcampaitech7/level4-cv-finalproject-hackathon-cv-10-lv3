@@ -1,9 +1,9 @@
 import streamlit as st
+import os
 import time
-from APIs.feedback import feedback_for_diary
-from APIs.user_input import userInput
+from APIs.feedback import feedback
 
-def diary():
+def diary(timestamp):
     st.title("📖 Diary Mode")
     
     # 학습을 새로 시작할 때 상태 초기화
@@ -25,16 +25,51 @@ def diary():
         st.success("🎉 학습이 종료되었습니다. 오늘도 수고하셨습니다!")
         return  # 학습이 완전히 종료되었으므로 더 이상 실행하지 않음
     
-    st.write("오늘 하루를 기록해보세요! AI가 피드백을 제공합니다. ✍️")
+    st.write("오늘 하루를 영어로 기록해보세요! ✍️")
 
-    # 사용자 입력 (음성 & 텍스트 가능)
-    user_input = userInput()  # 음성 또는 텍스트 입력
+    # 영어 일기 확인 및 수정
+    image_path = f"uploads/image_{timestamp}.jpg"
+    diary_path = f'../saves/diary_{timestamp}.txt'
+
+    if os.path.exists(image_path):
+        st.image(image_path, width=400)
+    else:
+        st.write("🥲 이미지 파일을 찾을 수 없습니다.")
+
+    if os.path.exists(diary_path):
+        with open(diary_path, "r", encoding="utf-8") as f:
+            diary_text = f.read()
+    else:
+        diary_text = f"[{time.strftime('%Y-%m-%d')}]"
+
+    # 사용자가 수정할 수 있도록 text_area 제공
+    edited_text = st.text_area("**📓 오늘의 일기**", diary_text, height=500)
+
+    # 저장 버튼
+    if st.button("💾 저장하기"):
+        with open(diary_path, "w", encoding="utf-8") as f:
+            f.write(edited_text)
+        st.success("✅ 일기가 성공적으로 저장되었습니다!")
 
     # 피드백 버튼
-    if st.button("💬 피드백 받기", use_container_width=True):
-        if user_input.strip():
-            feedback = feedback_for_diary(user_input)  # AI 피드백 생성
-            st.write("**📢 AI 피드백:**", feedback)
+    if st.button("🧑‍🏫 AI 튜터의 피드백 확인하기", use_container_width=True):
+        if diary_text:
+            request_text = diary_text.replace('\n', ' ')
+            feedback_response = feedback(request_text)  # AI 피드백 생성
+            st.markdown(
+                f"""
+                <div style="
+                    background-color: #f0f8ff;
+                    padding: 15px;
+                    border-radius: 10px;
+                    border-left: 5px solid #007BFF;
+                ">
+                    <b>📘 AI 피드백:</b><br>
+                    {feedback_response}
+                </div>
+                """,
+                unsafe_allow_html=True
+            )
         else:
             st.warning("일기를 입력해주세요!")
 

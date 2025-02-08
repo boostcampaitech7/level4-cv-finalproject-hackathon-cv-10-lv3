@@ -1,4 +1,4 @@
-import yaml
+import os
 import time
 
 from APIs.HCXexecutor import CompletionExecutor
@@ -20,7 +20,7 @@ def generate_diary(chat_history, timestamp):
 
     summary_prompt = [{
         "role": "system",
-        "content": "You are an AI assistant who rewrites the conversation in a **English diary** format. The diary entry should be in the first person and describe the day as if the user wrote it."
+        "content": "You are an AI assistant who rewrites the conversation in a **English diary** format. The diary text should be in the first person and describe the day as if the user wrote it. Don't write a introduction like 'In my diary'. Focus more on the contents of **user** than the contents of chatbot."
     }, {
         "role": "user",
         "content": diary_prompt
@@ -38,10 +38,12 @@ def generate_diary(chat_history, timestamp):
     }
     
     diary_text = completion_executor.execute(request_data)
-    diary_path = f'/data/ephemeral/home/level4-cv-finalproject-hackathon-cv-10-lv3/Project/saves/diary_{timestamp}.txt'
+    diary_path = f'../saves/diary_{timestamp}.txt'
+
+    os.makedirs(os.path.dirname(diary_path), exist_ok=True)
     
     with open(diary_path, 'w', encoding='utf-8') as diary_file:
-        diary_file.write(f'\n[{time.strftime("%Y.%m.%d")}]\n{diary_text}')
+        diary_file.write(f'\n[{time.strftime("%Y-%m-%d")}]\n{diary_text}')
         diary_file.flush()
     
     print("Diary saved.")

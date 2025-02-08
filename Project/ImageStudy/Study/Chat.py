@@ -129,11 +129,13 @@ def chat(timestamp):
                 feedback_text = feedback(last_user_response)
                 st.write(f"📝 Feedback: {feedback_text}")
     
-    col1 = st.columns(1)
+    col1 = st.columns(1)[0]
     with col1:
         if st.button("📓 영어 일기 생성하기", use_container_width=True):
-            diary_text = generate_diary(st.session_state.chat_history)
-            st.write(f" {diary_text}")
+            diary_text = generate_diary(st.session_state.chat_history[1:], timestamp)
+            st.write(diary_text)
+            st.rerun()
+
 
     # 종료 버튼 추가
     col1, col2 = st.columns(2)

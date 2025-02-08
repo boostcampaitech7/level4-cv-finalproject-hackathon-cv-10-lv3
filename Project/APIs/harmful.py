@@ -1,5 +1,4 @@
 from APIs.HCXexecutor import CompletionExecutor
-from APIs.clova_papago import translate_by_papago
 import json
 
 def call_hcx(req):
@@ -29,9 +28,9 @@ def harmful(timestamp):
         sentences = json.load(f)
 
     req = [{"role":"system",
-            "content":f"- 입력 text: {sentences} -입력 text가 해로운 내용을 포함한 경우, 해로움을 출력합니다."}]
+            "content":f"- 입력 text: {sentences} -입력 text가 해로운 내용을 포함한 경우, 'harmful'을 출력합니다. 그 외에는 'fine'을 출력합니다."}]
     result=call_hcx(req)
-    if result=='해로움':
+    if result=='harmful':
         return "harmful"
     else:
         return "fine"

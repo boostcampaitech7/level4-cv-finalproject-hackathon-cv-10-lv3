@@ -87,4 +87,5 @@ def ProcessFile(input, output):
     # 결과 저장
     cv2.imwrite(output, ROI)
     print(f"Processed {input} -> {output}")
+    return ROI
 

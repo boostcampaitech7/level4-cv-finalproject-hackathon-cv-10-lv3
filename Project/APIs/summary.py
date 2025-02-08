@@ -38,9 +38,9 @@ def generate_diary(chat_history, timestamp):
     }
     
     diary_text = completion_executor.execute(request_data)
-    diary_path = f'/data/ephemeral/home/level4-cv-finalproject-hackathon-cv-10-lv3/Project/saves/diary_{timestamp}.jpg'
+    diary_path = f'/data/ephemeral/home/level4-cv-finalproject-hackathon-cv-10-lv3/Project/saves/diary_{timestamp}.txt'
     
-    with open('diary_path', 'a', encoding='utf-8') as diary_file:
+    with open(diary_path, 'w', encoding='utf-8') as diary_file:
         diary_file.write(f'\n[{time.strftime("%Y.%m.%d")}]\n{diary_text}')
         diary_file.flush()
     

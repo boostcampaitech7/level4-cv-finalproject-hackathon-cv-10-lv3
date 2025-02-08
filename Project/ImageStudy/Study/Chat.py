@@ -132,9 +132,9 @@ def chat(timestamp):
     col1 = st.columns(1)[0]
     with col1:
         if st.button("📓 영어 일기 생성하기", use_container_width=True):
-            diary_text = generate_diary(st.session_state.chat_history[1:], timestamp)
+            chathist = st.session_state.chat_history
+            diary_text = generate_diary(chathist[1:len(chathist) - 1], timestamp)
             st.write(diary_text)
-            st.rerun()
 
 
     # 종료 버튼 추가

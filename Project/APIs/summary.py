@@ -6,19 +6,19 @@ from APIs.HCXExecutor import CompletionExecutor
 completion_executor = CompletionExecutor()
 
 def generate_diary(chat_history):
-    """사용자의 응답을 요약하여 일기 형식으로 변환하는 함수"""
+    """채팅 기록을 요약하여 일기 형식으로 변환하는 함수"""
 
     if not chat_history:
         return "No user responses to summarize."
     
-    user_text = "\n".join(chat_history)
+    texts = "\n".join(chat_history)
 
-    diary_prompt = f""" Rewrite the following user responses in natural diary-style lines:
-        {user_text}"""
+    diary_prompt = f""" Rewrite the following chating history in natural diary-style lines:
+        {texts}"""
 
     summary_prompt = [{
         "role": "system",
-        "content": "You are an AI assistant who rewrites the conversation in a diary format. The diary entry should be in the first person and describe the day as if the user wrote it."
+        "content": "You are an AI assistant who rewrites the conversation in a **English diary** format. The diary entry should be in the first person and describe the day as if the user wrote it."
     }, {
         "role": "user",
         "content": diary_prompt

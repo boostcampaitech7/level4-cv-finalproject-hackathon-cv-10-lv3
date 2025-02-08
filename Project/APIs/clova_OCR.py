@@ -88,6 +88,14 @@ def process_json(timestamp):
         # 문장을 list에 저장
         extracted_texts.extend(sentences)
 
+    # 첫 번째 문장이 비어있거나 대문자로 시작하지 않으면 제거
+    if  extracted_texts[0]=='' or not extracted_texts[0][0].isupper():
+        extracted_texts.pop(0)
+
+    # 마지막 문장이 종결 기호로 끝나지 않으면 제거
+    if not re.search(r'[.!?"\']$', extracted_texts[-1]):
+        extracted_texts.pop()
+    
     # 결과를 JSON 형식으로 저장
     with open(output_file, "w", encoding="utf-8") as file:
         json.dump(extracted_texts, file, ensure_ascii=False, indent=4)

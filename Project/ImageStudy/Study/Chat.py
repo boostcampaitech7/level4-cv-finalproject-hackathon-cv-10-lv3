@@ -5,6 +5,7 @@ from APIs.image_alt import img_alt
 from APIs.HCXexecutor import CompletionExecutor
 from APIs.user_input import userInput
 from APIs.feedback import feedback
+from APIs.summary import generate_diary
 
 MAX_TURNS = 11  # 대화 횟수 제한
 
@@ -127,9 +128,12 @@ def chat(timestamp):
                 last_user_response = preset_text[len(preset_text) - 2]["content"]
                 feedback_text = feedback(last_user_response)
                 st.write(f"📝 Feedback: {feedback_text}")
-                
-                # preset_text 업데이트
-                print(st.session_state.preset_text)
+    
+    col1 = st.columns(1)
+    with col1:
+        if st.button("📓 영어 일기 생성하기", use_container_width=True):
+            diary_text = generate_diary(st.session_state.chat_history)
+            st.write(f" {diary_text}")
 
     # 종료 버튼 추가
     col1, col2 = st.columns(2)

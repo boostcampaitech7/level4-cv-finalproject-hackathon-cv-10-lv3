@@ -82,10 +82,10 @@ def dictation_mode(timestamp, voice_folder='saves/voices'):
         if user_input_text:
             st.write("**Original Sentence:**", selected_sentence)
             st.write("**Your Input:**", user_input_text)
+            # 번역 보기 버튼
+            if st.button("🌍 번역 보기"):
+                st.write(translation[st.session_state.Dictation_selected_sentence_idx]["translation"])
 
-        # 번역 보기 버튼
-        if st.button("🌍 번역 보기", use_container_width=True):
-            st.write(translation[st.session_state.Dictation_selected_sentence_idx]["translation"])
 
         # 버튼 기반 작업
         col1, col2, col3 = st.columns(3)

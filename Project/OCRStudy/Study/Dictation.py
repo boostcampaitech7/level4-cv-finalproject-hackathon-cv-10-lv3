@@ -4,13 +4,20 @@ import streamlit as st
 from APIs.clova_voice import naver_tts
 from APIs.user_input import userInput
 
-def dictation_mode(input_json='extracted.json', output_folder='saves/voices'):
+def dictation_mode(timestamp, voice_folder='saves/voices'):
+    input_json = f'saves/save2_extracted{timestamp}.json'
+    translation_path = f'saves/save3_translation{timestamp}.json'
+    voice_folder='saves/voices'
     st.title("Dictation Mode")
     
     # JSON 파일 로드
     with open(input_json, 'r', encoding='utf-8') as f:
         sentences = json.load(f)
-        
+
+    # 번역본/harmful score 로드
+    with open(translation_path, 'r', encoding='utf-8') as f:
+        translation = json.load(f)
+
     # ✅ 학습을 새로 시작할 때 상태 초기화
     if "Dictation_change_mode" in st.session_state and st.session_state.Dictation_change_mode:
         st.session_state.Dictation_selected_sentence_idx = None
@@ -54,14 +61,19 @@ def dictation_mode(input_json='extracted.json', output_folder='saves/voices'):
         selected_sentence = sentences[st.session_state.Dictation_selected_sentence_idx]
         
         # 음성 재생
-        voice_file = os.path.join(output_folder, f"voice_{st.session_state.Dictation_selected_sentence_idx + 1}.mp3")
+        voice_file = os.path.join(voice_folder, f"voice_{st.session_state.Dictation_selected_sentence_idx + 1}.mp3")
         if not os.path.exists(voice_file):
-            naver_tts(input_json=input_json, output_folder=output_folder)
+            naver_tts(input_json=input_json, output_folder=voice_folder)
         
         if os.path.exists(voice_file):
             st.audio(voice_file, format="audio/mp3")
         else:
             st.error("음성 파일 생성에 실패했습니다.")
+        
+        # 유해성 경고 문구
+        harmful_score  = translation[st.session_state.Dictation_selected_sentence_idx]["harmful_score"]
+        if harmful_score<=4:
+            st.error("⚠️ 학습에 부적절한 내용을 포함하고 있습니다.") 
         
         # 사용자 입력
         st.markdown("### 문장에 대해 Dictation을 작성하세요.")
@@ -70,6 +82,10 @@ def dictation_mode(input_json='extracted.json', output_folder='saves/voices'):
         if user_input_text:
             st.write("**Original Sentence:**", selected_sentence)
             st.write("**Your Input:**", user_input_text)
+
+        # 번역 보기 버튼
+        if st.button("🌍 번역 보기", use_container_width=True):
+            st.write(translation[st.session_state.Dictation_selected_sentence_idx]["translation"])
 
         # 버튼 기반 작업
         col1, col2, col3 = st.columns(3)

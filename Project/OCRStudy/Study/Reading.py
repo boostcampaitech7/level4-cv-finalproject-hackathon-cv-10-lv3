@@ -40,9 +40,14 @@ def reading(timestamp, voice_folder='saves/voices'):
 
     length = len(translation)
     current_sentence = translation[st.session_state.current_idx]["original"]
+    harmful_score  = translation[st.session_state.current_idx]["harmful_score"]
 
     # 문장 상태 출력
     st.subheader(f"{st.session_state.current_idx + 1} / {length}: {current_sentence}")
+
+    # 유해성 경고 문구
+    if harmful_score<=4:
+        st.error("⚠️ 학습에 부적절한 내용을 포함하고 있습니다.") 
 
     # 버튼 클릭 이벤트 처리
     col1, col2, col3 = st.columns([1, 1, 1])

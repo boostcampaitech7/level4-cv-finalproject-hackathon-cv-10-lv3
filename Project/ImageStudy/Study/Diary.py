@@ -46,7 +46,7 @@ def diary(timestamp):
     edited_text = st.text_area("**📓 오늘의 일기**", diary_text, height=500)
 
     # 저장 버튼
-    if st.button("💾 저장하기"):
+    if st.button("💾 저장하기", use_container_width=True):
         with open(diary_path, "w", encoding="utf-8") as f:
             f.write(edited_text)
         st.success("✅ 일기가 성공적으로 저장되었습니다!")
@@ -88,7 +88,10 @@ def diary(timestamp):
     # 메인 페이지로 돌아가는 버튼
     st.divider()
     if st.button("⬅️ 홈 화면으로 돌아가기", use_container_width=True):
-        st.session_state.current_step = 2
+        st.session_state.current_step = 1
         st.session_state.Diary_change_mode = False
         st.session_state.Diary_is_finished = False
+        st.session_state.uploaded_image = None
+        st.session_state.timestamp = None
+        st.session_state.image_path = None
         st.switch_page("main_front.py")

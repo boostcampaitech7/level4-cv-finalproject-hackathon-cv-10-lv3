@@ -108,7 +108,7 @@ def chat(timestamp):
 
     col1, col2 = st.columns(2)
     with col1:
-        if st.button("Send"):
+        if st.button("Send", use_container_width=True):
             if user_input.strip():
                 preset_text.append({"role": "user", "content": user_input})
                 st.session_state.chat_history.append(("🙋 You:", user_input))
@@ -121,7 +121,7 @@ def chat(timestamp):
                 st.rerun()
 
     with col2:
-        if st.button("Retry"):
+        if st.button("Retry", use_container_width=True):
             if st.session_state.chat_history:
                 preset_text.pop()
                 st.session_state.chat_history.pop()  # 마지막 챗봇 응답 제거
@@ -133,7 +133,7 @@ def chat(timestamp):
 
     col1 = st.columns(1)[0]
     with col1:
-        if st.button("🧑‍🏫 AI 튜터의 피드백 확인하기"):
+        if st.button("🧑‍🏫 AI 튜터의 피드백 확인하기", use_container_width=True):
             if user_input:
                 feedback_text = feedback(user_input)
             elif st.session_state.chat_history:
@@ -159,7 +159,7 @@ def chat(timestamp):
     # 영어 일기 생성하기
     col1 = st.columns(1)[0]
     with col1:
-        if st.button("📓 영어 일기 생성하기"):
+        if st.button("📓 영어 일기 생성하기", use_container_width=True):
             chathist = st.session_state.chat_history
             diary_text = generate_diary(chathist[1:len(chathist) - 1], timestamp)
 
@@ -201,9 +201,12 @@ def chat(timestamp):
     # 홈 화면 버튼
     st.divider()
     if st.button("⬅️ 홈 화면으로 돌아가기", use_container_width=True):
-        st.session_state.current_step = 2
+        st.session_state.current_step = 1
         st.session_state.Chat_change_mode = False
         st.session_state.Chat_is_finished = False
+        st.session_state.uploaded_image = None
+        st.session_state.timestamp = None
+        st.session_state.image_path = None
         st.session_state.retry = False
         st.session_state.chat_history = []
         st.session_state.chat_turns = 0

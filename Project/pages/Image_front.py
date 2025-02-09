@@ -32,10 +32,6 @@ if "Diary_change_mode" not in st.session_state:
     st.session_state.Diary_change_mode = False
 if "Diary_is_finished" not in st.session_state:
     st.session_state.Diary_is_finished = False
-if "diary_entries" not in st.session_state:
-    st.session_state.diary_entries = []  # 사용자의 일기 목록 저장
-if "diary_feedback" not in st.session_state:
-    st.session_state.diary_feedback = []  # AI 피드백 저장
 
 
 def main():

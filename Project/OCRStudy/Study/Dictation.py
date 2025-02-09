@@ -78,13 +78,14 @@ def dictation_mode(timestamp, voice_folder='saves/voices'):
         # 사용자 입력
         st.markdown("### 문장에 대해 Dictation을 작성하세요.")
         user_input_text = userInput()
-        
-        if user_input_text:
-            st.write("**Original Sentence:**", selected_sentence)
-            st.write("**Your Input:**", user_input_text)
-            # 번역 보기 버튼
-            if st.button("🌍 번역 보기"):
-                st.write(translation[st.session_state.Dictation_selected_sentence_idx]["translation"])
+        col1 = st.columns(1)[0]
+        with col1:
+            if st.button("Send"):
+                st.write("**Original Sentence:**", selected_sentence)
+                st.write("**Your Input:**", user_input_text)
+                # 번역 보기 버튼
+                if st.button("🌍 번역 보기"):
+                    st.write(translation[st.session_state.Dictation_selected_sentence_idx]["translation"])
 
 
         # 버튼 기반 작업

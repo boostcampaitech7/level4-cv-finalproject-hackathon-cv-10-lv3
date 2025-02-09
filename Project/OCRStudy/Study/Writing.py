@@ -69,27 +69,29 @@ def writing_mode(timestamp):
         user_answer = userInput()
         
         # ✅ 사용자의 답변을 입력한 후 원문 영어 문장을 보여줌
-        if user_answer:
-            st.write("**Your Answer:**", user_answer)
+        col1 = st.columns(1)[0]
+        with col1:
+            if st.button("Send"):
+                st.write("**Your Answer:**", user_answer)
 
-            # 원문 영어 문장 출력
-            if os.path.exists(input_json):
-                with open(input_json, "r", encoding="utf-8") as f:
-                    original_sentences = json.load(f)
+                # 원문 영어 문장 출력
+                if os.path.exists(input_json):
+                    with open(input_json, "r", encoding="utf-8") as f:
+                        original_sentences = json.load(f)
 
-                if st.session_state.Writing_selected_sentence_idx < len(original_sentences):
-                    original_sentence = original_sentences[st.session_state.Writing_selected_sentence_idx]
-                    st.write(f"**Original Sentence:** {original_sentence}")
+                    if st.session_state.Writing_selected_sentence_idx < len(original_sentences):
+                        original_sentence = original_sentences[st.session_state.Writing_selected_sentence_idx]
+                        st.write(f"**Original Sentence:** {original_sentence}")
+                    else:
+                        st.error("원문 영어 문장을 찾을 수 없습니다.")
                 else:
-                    st.error("원문 영어 문장을 찾을 수 없습니다.")
-            else:
-                st.error(f"\n'{input_json}' 파일이 존재하지 않습니다.")
-
-        # ✅ 피드백 버튼
-        # 피드백도 saves 폴더에 feedback으로 저장해둬서 feedback 누를 때마다 바뀌지 않도록 수정 # 비즈니스 관점으로 볼 때 request를 한 번만 보내는게 좋음 속도측면으로도
-        if st.button("💬 피드백 받기", use_container_width=True):
-            feedback_message = feedback(user_answer)
-            st.write("**Feedback:**", feedback_message)
+                    st.error(f"\n'{input_json}' 파일이 존재하지 않습니다.")
+        
+                # ✅ 피드백 버튼
+                # 피드백도 saves 폴더에 feedback으로 저장해둬서 feedback 누를 때마다 바뀌지 않도록 수정 # 비즈니스 관점으로 볼 때 request를 한 번만 보내는게 좋음 속도측면으로도
+                if st.button("💬 피드백 받기", use_container_width=True):
+                    feedback_message = feedback(user_answer)
+                    st.write("**Feedback:**", feedback_message)
         
         # 버튼 기반 작업
         col1, col2, col3 = st.columns(3)

@@ -64,8 +64,6 @@ def main():
         st.session_state.rotation_angle = 0  # 회전 각도 (초기값 0)
     if "flip_horizontal" not in st.session_state:
         st.session_state.flip_horizontal = False  # 좌우 반전 여부
-    if "flip_vertical" not in st.session_state:
-        st.session_state.flip_vertical = False  # 상하 반전 여부
 
     if st.session_state.current_step == 1:
         st.header("1. 학습할 이미지 업로드")
@@ -96,8 +94,6 @@ def main():
             img = img.rotate(st.session_state.rotation_angle, expand=True)
             if st.session_state.flip_horizontal:
                 img = ImageOps.mirror(img)
-            if st.session_state.flip_vertical:
-                img = ImageOps.flip(img)
 
             # 이미지 표시
             st.image(img, caption="변환된 이미지", use_column_width=True)
@@ -138,7 +134,7 @@ def main():
                     st.session_state.current_step += 1
 
 
-    # Step 2: OCR 처리 및 음성 파일 생성
+    # Step 2: OCR 처리, 번역, 음성 파일 생성
     if st.session_state.current_step == 2:
         st.header("2. OCR 처리")
         with st.spinner("OCR을 수행 중입니다..."):
@@ -175,7 +171,7 @@ def main():
                 reading(st.session_state.timestamp, voice_folder='saves/voices')
             elif study_mode == "듣기 (Dictation)":
                 st.session_state.current_step = 5  # Dictation 모드로 들어가면 5으로 변경
-                dictation_mode(input_json=f'saves/save2_extracted{st.session_state.timestamp}.json', output_folder='saves/voices')
+                dictation_mode(st.session_state.timestamp, voice_folder='saves/voices')
             elif study_mode == "쓰기 (Writing)":
                 st.session_state.current_step = 6  # Writing 모드로 들어가면 6로 변경
                 writing_mode(st.session_state.timestamp)
@@ -183,7 +179,7 @@ def main():
     elif st.session_state.current_step == 4:
         reading(st.session_state.timestamp, voice_folder='saves/voices')  # 학습 중에는 계속 reading 유지
     elif st.session_state.current_step == 5:
-        dictation_mode(input_json=f'saves/save2_extracted{st.session_state.timestamp}.json', output_folder='saves/voices')
+        dictation_mode(st.session_state.timestamp, voice_folder='saves/voices')
     elif st.session_state.current_step == 6:
         writing_mode(st.session_state.timestamp)
         

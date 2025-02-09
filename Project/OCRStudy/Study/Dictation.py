@@ -106,9 +106,14 @@ def dictation_mode(timestamp, voice_folder='saves/voices'):
         # 📌 메인 페이지로 돌아가는 버튼 추가
         st.divider()
         if st.button("⬅️ 홈 화면으로 돌아가기", use_container_width=True):
-            st.session_state.current_step = 3  # OCR 학습 모드 선택 화면으로 가게 함
+            st.session_state.current_step = 1  # OCR 첨부터 해야함.
             st.session_state.Dictation_selected_sentence_idx = None
             st.session_state.Dictation_change_mode = False
             st.session_state.Dictation_is_finished = False
-            
+            st.session_state.uploaded_image = None
+            st.session_state.timestamp = None
+            st.session_state.image_path = None
+            st.session_state.uploaded_image_path = None  # 이미지 경로 초기화
+            st.session_state.rotation_angle = 0  # 회전 각도 (초기값 0)
+            st.session_state.flip_horizontal = False
             st.switch_page("main_front.py")  # 메인 페이지로 이동

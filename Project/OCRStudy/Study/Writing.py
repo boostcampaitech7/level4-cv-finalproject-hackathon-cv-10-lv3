@@ -60,6 +60,11 @@ def writing_mode(timestamp):
         selected_translation = translations[st.session_state.Writing_selected_sentence_idx]
         st.markdown(f"##### 선택된 문장: {selected_translation['translation']}")
 
+        # 유해성 경고 문구
+        harmful_score  = translations[st.session_state.Writing_selected_sentence_idx]["harmful_score"]
+        if harmful_score<=4:
+            st.error("⚠️ 학습에 부적절한 내용을 포함하고 있습니다.") 
+            
         st.write("📌 선택된 문장에 대해 영어로 답변을 작성하세요.")
         user_answer = userInput()
         

@@ -23,7 +23,7 @@ class CompletionExecutor:
         self._api_key = API_KEY
         self._request_id = REQUEST_ID
 
-    def execute(self, completion_request):
+    def execute(self, completion_request, score=False):
         headers = {
             'Authorization': self._api_key,
             'X-NCP-CLOVASTUDIO-REQUEST-ID': self._request_id,
@@ -53,5 +53,7 @@ class CompletionExecutor:
                             print(f"Error parsing message: {e}")
                         except KeyError as e:
                             print(f"Missing key in message: {e}")
-
-        return content.strip()
+        if score==True:
+            return content.strip(), harmful_score
+        else:
+            return content.strip()

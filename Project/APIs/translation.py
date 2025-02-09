@@ -18,13 +18,13 @@ def call_hcx(req):
             'seed': 0
         }
 
-    result = completion_executor.execute(request_data)
-    return result
+    result, harmful_score = completion_executor.execute(request_data, score=True)
+    return result, harmful_score
 
 
 def translation(timestamp):
-    input_file = f"saves/save2_extracted{timestamp}.json" #input파일!
-    output_file = f"saves/save3_translation{timestamp}.json" # output파일!
+    input_file = f"saves/save2_extracted{timestamp}.json"
+    output_file = f"saves/save3_translation{timestamp}.json"
 
     with open(input_file, "r", encoding="utf-8") as f:
         sentences = json.load(f)
@@ -34,13 +34,14 @@ def translation(timestamp):
         result=''
         while(result==''):
             req = [{"role":"system",
-                    "content":f"- 입력 문장: {sentence} -입력 문장을 한국어로 번역합니다. -번역문된 문장만 출력합니다. "}]
-            result=call_hcx(req)
+                    "content":f"- 입력 문장: {sentence} -입력 문장을 한국어로 번역합니다. -번역된 문장만 출력합니다. "}]
+            result, harmful_score =call_hcx(req)
             if cnt == 5:
                 result=translate_by_papago(sentence)
                 break
         translated.append({"original": sentence,
-                            "translation": result
+                            "translation": result,
+                            "harmful_score": harmful_score
                             })
 
     # 저장하기

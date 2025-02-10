@@ -1,8 +1,10 @@
 import os
 import json
+import random
 import streamlit as st
 from APIs.feedback import feedback
 from APIs.user_input import userInput
+from APIs.easy_mode import easymode
 
 def writing_mode(timestamp):
     input_json = f"saves/save2_extracted{timestamp}.json"
@@ -15,6 +17,7 @@ def writing_mode(timestamp):
         st.session_state.Writing_selected_sentence_idx = None
         st.session_state.Writing_change_mode = False
         st.session_state.Writing_is_finished = False
+        st.session_state.Easy_Hard = "Hard"
     
     # 상태 초기화
     if "Writing_selected_sentence_idx" not in st.session_state:
@@ -23,6 +26,8 @@ def writing_mode(timestamp):
         st.session_state.Writing_change_mode = False  
     if "Writing_is_finished" not in st.session_state:
         st.session_state.Writing_is_finished = False
+    if "Easy_Hard" not in st.session_state:
+        st.session_state.Easy_Hard = "Hard"
         
     if "current_step" in st.session_state:
         st.session_state.current_step = 6
@@ -44,6 +49,28 @@ def writing_mode(timestamp):
     if st.session_state.Writing_selected_sentence_idx is None:
         sentence_list = [f"{idx+1}. {item['translation']}" for idx, item in enumerate(translations)]
         
+        # 이지모드/하드모드 선택
+        st.markdown("### 현재 난이도:")
+        if st.session_state.Easy_Hard == "Easy":
+            st.markdown("### EASY")
+        elif st.session_state.Easy_Hard == "Nomal":
+            st.markdown("### NOMAL")
+        else:
+            st.markdown("### HARD")
+        col1, col2, col3 = st.columns(3)
+        with col1:
+            if st.button("EASY 모드로 실행"):
+                st.session_state.Easy_Hard = "Easy"
+                st.rerun()
+        with col2:
+            if st.button("NOMAL 모드로 실행"):
+                st.session_state.Easy_Hard = "Nomal"
+                st.rerun()
+        with col3:
+            if st.button("HARD 모드로 실행"):
+                st.session_state.Easy_Hard = "Hard"
+                st.rerun()
+
         # Markdown으로 출력
         st.markdown("### 문장 목록:")
         st.markdown("\n".join(sentence_list))
@@ -58,38 +85,46 @@ def writing_mode(timestamp):
     # ✅ 문장이 선택된 경우, 리스트를 숨기고 사용자 입력 진행
     else:
         selected_translation = translations[st.session_state.Writing_selected_sentence_idx]
-        st.markdown(f"##### 선택된 문장: {selected_translation['translation']}")
+        original_sentences = translations[st.session_state.Writing_selected_sentence_idx]["original"]
+        st.markdown(f"##### 선택된 문장: \n {selected_translation['translation']}")
 
         # 유해성 경고 문구
         harmful_score  = translations[st.session_state.Writing_selected_sentence_idx]["harmful_score"]
         if harmful_score<=4:
             st.error("⚠️ 학습에 부적절한 내용을 포함하고 있습니다.") 
+
+        if st.session_state.Easy_Hard=="Easy":
+            hint=easymode(original_sentences)
+            st.write(hint)
+            st.markdown("📌 빈칸을 채워봅시다.")
+        elif st.session_state.Easy_Hard=="Nomal":
+            words = original_sentences.split()
+            random.shuffle(words)
+            st.write(f"**{', '.join(words)}**")
+            st.markdown("📌 순서를 맞춰봅시다.")
             
         st.write("📌 선택된 문장에 대해 영어로 답변을 작성하세요.")
         user_answer = userInput()
         
         # ✅ 사용자의 답변을 입력한 후 원문 영어 문장을 보여줌
-        if user_answer:
-            st.write("**Your Answer:**", user_answer)
+        col1 = st.columns(1)[0]
+        with col1:
+            if st.button("Send"):
+                st.write("**Your Answer:**", user_answer)
 
-            # 원문 영어 문장 출력
-            if os.path.exists(input_json):
-                with open(input_json, "r", encoding="utf-8") as f:
-                    original_sentences = json.load(f)
-
+                # 원문 영어 문장 출력
                 if st.session_state.Writing_selected_sentence_idx < len(original_sentences):
                     original_sentence = original_sentences[st.session_state.Writing_selected_sentence_idx]
                     st.write(f"**Original Sentence:** {original_sentence}")
                 else:
                     st.error("원문 영어 문장을 찾을 수 없습니다.")
-            else:
-                st.error(f"\n'{input_json}' 파일이 존재하지 않습니다.")
 
-        # ✅ 피드백 버튼
-        # 피드백도 saves 폴더에 feedback으로 저장해둬서 feedback 누를 때마다 바뀌지 않도록 수정 # 비즈니스 관점으로 볼 때 request를 한 번만 보내는게 좋음 속도측면으로도
-        if st.button("💬 피드백 받기", use_container_width=True):
-            feedback_message = feedback(user_answer)
-            st.write("**Feedback:**", feedback_message)
+        
+                # ✅ 피드백 버튼
+                # 피드백도 saves 폴더에 feedback으로 저장해둬서 feedback 누를 때마다 바뀌지 않도록 수정 # 비즈니스 관점으로 볼 때 request를 한 번만 보내는게 좋음 속도측면으로도
+                if st.button("💬 피드백 받기", use_container_width=True):
+                    feedback_message = feedback(user_answer)
+                    st.write("**Feedback:**", feedback_message)
         
         # 버튼 기반 작업
         col1, col2, col3 = st.columns(3)

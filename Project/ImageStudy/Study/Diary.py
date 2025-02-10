@@ -59,7 +59,40 @@ def diary(timestamp):
         diary_text = f"[{time.strftime('%Y-%m-%d')}]"
 
     # 사용자가 수정할 수 있도록 text_area 제공
-    edited_text = st.text_area("**📓 오늘의 일기**", diary_text, height=500)
+    #edited_text = st.text_area("**📓 오늘의 일기**", diary_text, height=500)
+    # CSS 로드
+    # CSS 스타일 적용
+    st.markdown(
+        """
+        <style>
+        @font-face {
+            font-family: 'GangwonEduSaeeum_OTFMediumA';
+            src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_2201-2@1.0/GangwonEduSaeeum_OTFMediumA.woff') format('woff');
+            font-weight: normal;
+            font-style: normal;
+        }
+        div[data-testid="stTextArea"] textarea {
+            background-color: #f9f5e6; 
+            font-family: 'GangwonEduSaeeum_OTFMediumA'; 
+            border: 2px solid #d1b7a1; 
+            border-radius: 8px;
+            padding: 15px; 
+            font-size: 18px; 
+            color: #5c4033; 
+        }
+        div[data-testid="stTextArea"] label {
+            font-weight: bold;
+            font-size: 25px;
+        }
+        </style>
+        """,
+        unsafe_allow_html=True
+    )
+
+    # 다이어리 텍스트 입력
+    edited_text = st.text_area("**📓 오늘의 일기**", diary_text, height=350)
+
+
 
     # 저장 버튼
     if st.button("💾 저장하기", use_container_width=True):
@@ -112,3 +145,43 @@ def diary(timestamp):
         st.session_state.timestamp = None
         st.session_state.image_path = None
         st.switch_page("main_front.py")
+
+
+# CSS 스타일 적용
+def load_css():
+    css = """
+    <style>
+        @import url('https://fonts.googleapis.com/css?family=Shadows+Into+Light+Two');
+        body {
+            color: #484448;
+            font-size: 18px;
+            font-family: 'Shadows Into Light Two', cursive;
+            text-align: center;
+        }
+        .journal {
+            width: 350px;
+            min-height: 275px;
+            padding: 20px;
+            display: inline-block;
+            text-align: left;
+            background-image:
+                linear-gradient(180deg, white 3rem, #F0A4A4 calc(3rem), #F0A4A4 calc(3rem + 2px), transparent 1px),
+                repeating-linear-gradient(0deg, transparent, transparent 1.5rem, #DDD 1px, #DDD calc(1.5rem + 1px));
+            box-shadow: 1px 1px 3px rgba(0,0,0,.25);
+            border-radius: 10px;
+        }
+        .title {
+            text-align: center;
+            margin-bottom: 10px;
+        }
+        .stTextArea>div>textarea {
+            background-color: #fff8e1;
+            border: 2px solid #f4a261;
+            border-radius: 10px;
+            padding: 10px;
+            font-size: 16px;
+            font-family: 'Shadows Into Light Two', cursive;
+        }
+    </style>
+    """
+    st.markdown(css, unsafe_allow_html=True)

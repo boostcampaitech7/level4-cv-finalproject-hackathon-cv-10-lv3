@@ -20,4 +20,4 @@ def feedback(text):
     if '\n설명:' not in feedback_text and '설명:' in feedback_text:
                 feedback_text = feedback_text.replace('설명:', '\n\n설명:')
 
-    return feedback_text
+    return feedback_text if feedback_text else "사용자가 많아 요청을 처리할 수 없습니다. 다시 시도해주세요."

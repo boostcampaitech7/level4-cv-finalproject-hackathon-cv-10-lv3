@@ -186,6 +186,7 @@ def chat(timestamp):
                 ">
                     {diary_text.strip()}
                 </div>
+                <br>
                 """,
                 unsafe_allow_html=True
             )

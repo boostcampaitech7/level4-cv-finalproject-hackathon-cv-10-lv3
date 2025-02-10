@@ -46,5 +46,5 @@ pip install -r requirements.txt
 2️⃣ Streamlit 웹 애플리케이션 실행
 ```
 cd Project # Project root로 이동
-streamlit run main_fornt.py
+streamlit run main_front.py
 ```

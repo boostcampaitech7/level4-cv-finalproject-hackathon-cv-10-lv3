@@ -6,6 +6,7 @@ from APIs.HCXexecutor import CompletionExecutor
 from APIs.user_input import userInput
 from APIs.feedback import feedback
 from APIs.summary import generate_diary
+from APIs.clova_voice import naver_tts_for_chat
 from ImageStudy.Study.Diary import diary
 
 MAX_TURNS = 11  # 대화 횟수 제한
@@ -106,7 +107,7 @@ def chat(timestamp):
     # 사용자 입력 받기
     user_input = userInput()
 
-    col1, col2 = st.columns(2)
+    col1, col2, col3 = st.columns(3)
     with col1:
         if st.button("Send", use_container_width=True):
             if user_input.strip():
@@ -121,7 +122,7 @@ def chat(timestamp):
                 st.rerun()
 
     with col2:
-        if st.button("Retry", use_container_width=True):
+        if st.button("🔄️ 채팅 재생성", use_container_width=True):
             if st.session_state.chat_history:
                 preset_text.pop()
                 st.session_state.chat_history.pop()  # 마지막 챗봇 응답 제거
@@ -130,6 +131,17 @@ def chat(timestamp):
                 preset_text.append({"role": "assistant", "content": response})
                 st.session_state.chat_history.append(("🤖 Chatbot:", response))
                 st.rerun()
+
+    with col3:
+        if st.button("🔊 음성 듣기", use_container_width=True):
+            chat_turn = st.session_state.chat_turns
+            tts_file_name = f'chat{timestamp}_response{chat_turn}.mp3'
+            tts_file_path = os.path.join('saves/voices/', tts_file_name)
+
+            if not os.path.isfile(tts_file_path):
+                last_response = st.session_state.chat_history[-1][1] if st.session_state.chat_history else "No response yet"
+                tts_file_path = naver_tts_for_chat(last_response, output_file_name=tts_file_name)
+            st.audio(tts_file_path, format='audio/mp3')
 
     col1 = st.columns(1)[0]
     with col1:
@@ -177,14 +189,6 @@ def chat(timestamp):
                 """,
                 unsafe_allow_html=True
             )
-            """if st.button("✏️ 일기 작성 화면으로 이동"):
-                st.session_state.current_step = 4
-                st.session_state.Chat_is_finished = True
-                st.session_state.retry = False
-                st.session_state.chat_history = []
-                st.session_state.chat_turns = 0
-                
-                diary(timestamp)"""
 
     # 종료 버튼 추가
     col1, col2 = st.columns(2)

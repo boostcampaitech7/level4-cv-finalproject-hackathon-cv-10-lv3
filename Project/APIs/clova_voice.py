@@ -57,12 +57,13 @@ def naver_tts(input_json='extracted.json', output_folder='saves/voices'):
 
     print("TTS 변환 완료!")
 
-def naver_tts_for_chat(text, output_folder='saves/voices', filename='response.mp3'):
+def naver_tts_for_chat(text, output_folder = 'saves/voices/', output_file_name = 'chat_response.mp3'):
     """
     네이버 TTS를 사용하여 입력된 문장을 음성 파일로 변환합니다.
     """
 
     os.makedirs(output_folder, exist_ok=True)
+    output_file = os.path.join(output_folder, output_file_name)
 
     enc_text = urllib.parse.quote(text)
     data = f"speaker=danna&volume=0&speed=0&pitch=0&format=mp3&text={enc_text}"
@@ -71,8 +72,6 @@ def naver_tts_for_chat(text, output_folder='saves/voices', filename='response.mp
     request = urllib.request.Request(url)
     request.add_header("X-NCP-APIGW-API-KEY-ID", CLIENT_ID)
     request.add_header("X-NCP-APIGW-API-KEY", CLIENT_SECRET)
-    
-    output_file = os.path.join(output_folder, filename)
 
     try:
         response = urllib.request.urlopen(request, data=data.encode('utf-8'))

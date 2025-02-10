@@ -7,7 +7,6 @@ from APIs.clova_OCR import OCR
 from APIs.translation import translation
 from APIs.clova_voice import naver_tts
 from APIs.rotate import ProcessFile
-from APIs.harmful import harmful
 from OCRStudy.Study.Dictation import dictation_mode
 from OCRStudy.Study.Reading import reading
 from OCRStudy.Study.Writing import writing_mode
@@ -68,7 +67,7 @@ def main():
     if st.session_state.current_step == 1:
         st.header("1. 학습할 이미지 업로드")
         uploaded_image = st.file_uploader("이미지를 업로드하세요.", type=["jpg", "jpeg", "png"])
-        st.error("✨ 이미지가 휘어지지 않도록 촬영해주세요.")
+        st.error("✨ 이미지가 휘어지지 않도록 촬영해주세요. \n ✨ 반드시 Text가 포함된 이미지를 업로드하세요.")
         if uploaded_image:
             timestamp = str(math.floor(datetime.now().timestamp()))
 

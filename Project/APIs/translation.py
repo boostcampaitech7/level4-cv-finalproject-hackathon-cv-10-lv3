@@ -10,8 +10,8 @@ def call_hcx(req):
             'messages': req,
             'topP': 0.8,
             'topK': 0,
-            'maxTokens': 1000,
-            'temperature': 0.3,
+            'maxTokens': 500,
+            'temperature': 0.2,
             'repeatPenalty': 3.0,
             'stopBefore': ['###'],
             'includeAiFilters': True,
@@ -38,6 +38,13 @@ def translation(timestamp):
             result, harmful_score =call_hcx(req)
             if cnt == 5:
                 result=translate_by_papago(sentence)
+                req2 = [{"role":"system",
+                        "content":f"- 입력 text: {sentences} -입력 text가 해로운 내용을 포함한 경우, 'harmful'을 출력합니다. 그 외에는 'fine'을 출력합니다."}]
+                harmfulornot=call_hcx(req2)
+                if harmfulornot=='harmful':
+                    harmful_score=4
+                else:
+                    harmful_score=6
                 break
         translated.append({"original": sentence,
                             "translation": result,

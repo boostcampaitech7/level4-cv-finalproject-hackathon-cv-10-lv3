@@ -32,6 +32,8 @@ class CompletionExecutor:
         }
 
         content = None
+        harmful_score = 6  # 기본값 설정
+        
         with requests.post(self._host + '/testapp/v1/chat-completions/HCX-003',
                            headers=headers, json=completion_request, stream=True) as r:
             wrt = False
@@ -57,6 +59,6 @@ class CompletionExecutor:
                         except KeyError as e:
                             print(f"Missing key in message: {e}")
         if score==True:
-            return content.strip(), harmful_score
+            return content, harmful_score
         else:
-            return content.strip()
+            return content

@@ -38,7 +38,7 @@ def generate_diary(chat_history, timestamp):
     }
     
     diary_text = completion_executor.execute(request_data)
-    diary_path = f'../saves/diary_{timestamp}.txt'
+    diary_path = f'../saves/diary/{timestamp}.txt'
 
     os.makedirs(os.path.dirname(diary_path), exist_ok=True)
     

@@ -29,7 +29,7 @@ def diary(timestamp):
 
     # 영어 일기 확인 및 수정
     image_path = f"uploads/image_{timestamp}.jpg"
-    diary_path = f'../saves/diary_{timestamp}.txt'
+    diary_path = f'../saves/diary/{timestamp}.txt'
 
     if os.path.exists(image_path):
         st.image(image_path, width=400)

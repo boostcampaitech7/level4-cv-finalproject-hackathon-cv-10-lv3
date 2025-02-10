@@ -56,4 +56,4 @@ class CompletionExecutor:
         if score==True:
             return content.strip(), harmful_score
         else:
-            return content.strip()
+            return content

@@ -1,5 +1,9 @@
 import streamlit as st
 import random
+import os
+from datetime import datetime
+from PIL import Image
+
 from streamlit_config import set_global_config  # 설정 파일에서 설정을 가져오기
 from footer import footer
 
@@ -59,5 +63,68 @@ st.markdown("### 💡 오늘의 영어 명언")
 st.info(f"{quote}\n\n📢 **해석\:** {translation}")
 
 st.markdown("✅ 오늘의 목표: **이 문장을 소리 내어 3번 읽어보아요** 🗣️🔥")
+
+st.divider()
+
+# 오늘의 일기 (가장 최신 파일 불러오기)
+today_date = datetime.today().strftime("%y년 %m월 %d일")  # 오늘 날짜 가져오기
+st.markdown(f"### 📝 오늘의 일기, {today_date}")  # 날짜 포함
+feedback_folder = "saves/feedbacks"
+image_folder = "uploads"
+
+# 가장 최신 timestamp 찾기
+if os.path.exists(feedback_folder):
+    feedback_files = sorted(os.listdir(feedback_folder), reverse=True)  # 최신 파일 기준 정렬
+    if feedback_files:
+        latest_timestamp = feedback_files[0].split(".")[0]  # 파일명에서 timestamp 추출
+        feedback_path = os.path.join(feedback_folder, feedback_files[0])
+        image_path = os.path.join(image_folder, f"image_{latest_timestamp}.jpg")
+
+        # 일기 피드백 내용 읽기
+        with open(feedback_path, "r", encoding="utf-8") as f:
+            feedback_content = f.read()
+
+        # "수정된 문장:" 이후의 텍스트만 추출
+        if "수정된 문장:" in feedback_content:
+            feedback_content = feedback_content.split("수정된 문장:")[1].split("설명:")[0].strip()  # 설명 부분 제거
+
+        # 이미지 & 일기 피드백 표시
+        col1, col2 = st.columns([1, 2])
+
+        with col1:
+            if os.path.exists(image_path):
+                # 이미지 불러오기
+                img = Image.open(image_path)
+                width, height = img.size
+
+                # 정사각형 크롭: 중심을 기준으로 자르기
+                min_dim = min(width, height)
+                box = ((width - min_dim) // 2, (height - min_dim) // 2, 
+                    (width + min_dim) // 2, (height + min_dim) // 2)
+                img_cropped = img.crop(box)  # 정사각형 크롭
+
+                st.image(img_cropped, caption="📸 오늘의 순간", use_container_width=True)
+            else:
+                st.info("📷 오늘의 이미지를 찾을 수 없습니다.")
+
+        with col2:
+            st.markdown("**🍀 당신이 기록한 오늘 하루는요.**")
+            st.markdown(
+                f"""
+                <div style="
+                    background-color: #f0f8ff;
+                    padding: 15px;
+                    border-radius: 10px;
+                    border-left: 5px solid #007BFF;
+                ">
+                    {feedback_content}
+                </div>
+                """,
+                unsafe_allow_html=True
+            )
+    else:
+        st.info("📌 아직 저장된 일기가 없습니다. 오늘의 순간을 기록해보세요!")
+else:
+    st.info("📌 아직 저장된 일기가 없습니다. 오늘의 순간을 기록해보세요!")
 
 footer()  # footer 출력

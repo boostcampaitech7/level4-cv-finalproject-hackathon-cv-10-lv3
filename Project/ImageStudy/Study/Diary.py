@@ -45,6 +45,7 @@ def diary(timestamp):
     # 영어 일기 확인 및 수정
     image_path = f"uploads/image_{timestamp}.jpg"
     diary_path = f'saves/diary/{timestamp}.txt'
+    os.makedirs(os.path.dirname(diary_path), exist_ok=True)
 
     if os.path.exists(image_path):
         st.image(image_path, width=400)
@@ -68,8 +69,8 @@ def diary(timestamp):
 
     # 피드백 버튼
     if st.button("🧑‍🏫 AI 튜터의 피드백 확인하기", use_container_width=True):
-        if diary_text:
-            request_text = diary_text.replace('\n', ' ')
+        if edited_text:
+            request_text = edited_text.replace('\n', ' ')
             feedback_response = feedback(request_text, save=True, timestamp=timestamp)  # AI 피드백 생성
             st.markdown(
                 f"""
@@ -82,6 +83,7 @@ def diary(timestamp):
                     <b>📘 AI 피드백:</b><br>
                     {feedback_response}
                 </div>
+                <br>
                 """,
                 unsafe_allow_html=True
             )

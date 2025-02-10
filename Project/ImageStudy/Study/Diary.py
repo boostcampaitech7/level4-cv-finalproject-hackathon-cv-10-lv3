@@ -1,7 +1,7 @@
 import streamlit as st
 import os
 import time
-from APIs.feedback import feedback
+from APIs.feedback import feedback, feedback_review
 
 def diary(timestamp):
     st.title("📖 Diary Mode")
@@ -22,6 +22,21 @@ def diary(timestamp):
         
     # 학습 종료 상태 처리
     if st.session_state.Diary_is_finished:
+        review_text = feedback_review(timestamp)
+        st.markdown(
+                f"""
+                <div style="
+                    background-color: #f0f8ff;
+                    padding: 15px;
+                    border-radius: 10px;
+                    border-left: 5px solid #007BFF;
+                ">
+                    <b>📘 Review</b><br>
+                    {review_text}
+                </div>
+                """,
+                unsafe_allow_html=True
+            )
         st.success("🎉 학습이 종료되었습니다. 오늘도 수고하셨습니다!")
         return  # 학습이 완전히 종료되었으므로 더 이상 실행하지 않음
     
@@ -29,7 +44,8 @@ def diary(timestamp):
 
     # 영어 일기 확인 및 수정
     image_path = f"uploads/image_{timestamp}.jpg"
-    diary_path = f'../saves/diary_{timestamp}.txt'
+    diary_path = f'saves/diary/{timestamp}.txt'
+    os.makedirs(os.path.dirname(diary_path), exist_ok=True)
 
     if os.path.exists(image_path):
         st.image(image_path, width=400)
@@ -53,9 +69,9 @@ def diary(timestamp):
 
     # 피드백 버튼
     if st.button("🧑‍🏫 AI 튜터의 피드백 확인하기", use_container_width=True):
-        if diary_text:
-            request_text = diary_text.replace('\n', ' ')
-            feedback_response = feedback(request_text)  # AI 피드백 생성
+        if edited_text:
+            request_text = edited_text.replace('\n', ' ')
+            feedback_response = feedback(request_text, save=True, timestamp=timestamp)  # AI 피드백 생성
             st.markdown(
                 f"""
                 <div style="
@@ -67,6 +83,7 @@ def diary(timestamp):
                     <b>📘 AI 피드백:</b><br>
                     {feedback_response}
                 </div>
+                <br>
                 """,
                 unsafe_allow_html=True
             )

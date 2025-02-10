@@ -1,7 +1,7 @@
 from .clova_OCR import OCR
 from .clova_papago import translate_by_papago
 from .clova_voice import naver_tts, naver_tts_for_chat
-from .feedback import feedback
+from .feedback import feedback, feedback_review
 from .image_alt import img_alt
 from .summary import generate_diary
 from .user_input import userInput

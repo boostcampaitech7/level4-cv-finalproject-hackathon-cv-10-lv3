@@ -38,7 +38,10 @@ def generate_diary(chat_history, timestamp):
     }
     
     diary_text = completion_executor.execute(request_data)
-    diary_path = f'../saves/diary_{timestamp}.txt'
+    if not diary_text:
+        return "사용자가 많아 요청을 처리할 수 없습니다. 다시 시도해주세요."
+    
+    diary_path = f'saves/diary/{timestamp}.txt'
 
     os.makedirs(os.path.dirname(diary_path), exist_ok=True)
     
@@ -48,5 +51,3 @@ def generate_diary(chat_history, timestamp):
     
     print("Diary saved.")
     return diary_text
-
-generate_diary

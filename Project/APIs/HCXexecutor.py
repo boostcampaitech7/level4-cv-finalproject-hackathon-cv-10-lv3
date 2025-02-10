@@ -42,6 +42,9 @@ class CompletionExecutor:
                     message = line.decode("utf-8")
                     print(message)
 
+                    if message.startswith('event:error'):
+                        return "사용자가 많아 요청을 처리할 수 없습니다. 다시 시도해주세요."
+                    
                     if message.startswith('event:result'):
                         wrt = True
                     elif wrt:

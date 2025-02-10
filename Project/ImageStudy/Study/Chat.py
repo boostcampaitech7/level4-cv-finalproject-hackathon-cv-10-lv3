@@ -105,13 +105,107 @@ def chat(timestamp):
         preset_text.append({"role": "assistant", "content": response})
         st.session_state.chat_history.append(("🤖 Chatbot:", response))
 
-    # UI에 대화 내역 출력
+    # UI에 대화 내역 출력 준비
+    # Font Awesome CDN
+    st.markdown(
+        '<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">',
+        unsafe_allow_html=True
+    )
+    st.markdown("""
+        <style>
+            .chat-container {
+                width: 100%;
+                max-width: 600px;
+                margin: auto;
+                font-family: Arial, sans-serif;
+            }
+            
+            .chat1, .chat2 {
+                display: flex;
+                align-items: center;
+                margin-bottom: 10px;
+            }
+
+            .chat1 .perso-mess, .chat2 .perso-mess {
+                padding: 10px 15px;
+                border-radius: 15px;
+                font-size: 14px;
+                max-width: 70%;
+                display: flex;
+                align-items: center;
+            }
+
+            /* 로봇 채팅 (왼쪽) */
+            .chat1 {
+                justify-content: flex-start;
+            }
+
+            .chat1 .perso-mess {
+                background: #dfdbdb;
+                border-radius: 15px;
+            }
+
+            .chat1 .emoji {
+                font-size: 24px;
+                margin-right: 10px;
+            }
+
+            /* 사용자 채팅 (오른쪽) */
+            .chat2 {
+                justify-content: flex-end;
+            }
+
+            .chat2 .perso-mess {
+                background: #7cbf3c;
+                color: white;
+                text-align: right;
+                border-radius: 15px;
+                flex-direction: column;
+                align-items: flex-end;
+            }
+
+            .chat2 .emoji {
+                font-size: 24px;
+                margin-left: 10px;
+            }
+
+            .chat2 .image-content img {
+                max-width: 150px;
+                border-radius: 10px;
+                margin-top: 5px;
+            }
+
+        </style>
+    """, unsafe_allow_html=True)
+    
     for role, content in st.session_state.chat_history:
         if role == "📷 Image:":
-            st.write(role)
-            st.image(content, width=400)
+            col1, col2, col3 = st.columns([1, 1, 3])
+            with col3:
+                col1, col2 = st.columns([9, 1])
+
+                with col1:
+                    st.image(content, width=400)
+
+                with col2:
+                    st.markdown(
+                        """
+                        <div style="
+                            display: flex;
+                            align-items: flex-end;
+                            height: 100%;
+                        ">
+                            <p style="font-size: 25px;">🧑</p>
+                        </div>
+                        """,
+                        unsafe_allow_html=True
+                    )
+
+
+        elif role == "🤖 Chatbot:":
+            chat1(content)
         else:
-            st.write(role, content)
+            chat2(content)
 
     # 대화 횟수 제한 체크
     if st.session_state.chat_turns >= MAX_TURNS:
@@ -166,22 +260,27 @@ def chat(timestamp):
             elif st.session_state.chat_history:
                 request_data = preset_text[len(preset_text) - 2]["content"]
             feedback_text = feedback(request_data, save=True, timestamp=timestamp)
-            
+
+            # 문자열 변환
+            feedback_text = feedback_text.strip()
+            feedback_text = feedback_text.replace("\n", "<br>")
+            feedback_text = feedback_text.replace("수정된 문장", "<span style='color: #007BFF; font-weight: bold;'>수정된 문장</span>")
+            feedback_text = feedback_text.replace("설명", "<span style='color: #007BFF; font-weight: bold;'>설명</span>")
+
             st.markdown(
                 f"""
-                <div style="
-                    background-color: #f0f8ff;
-                    padding: 15px;
-                    border-radius: 10px;
-                    border-left: 5px solid #007BFF;
-                ">
-                    <b>📘 AI 피드백</b><br>
-                    {feedback_text}
-                </div>
+                    <div style="
+                        background-color: #f0f8ff;
+                        padding: 15px;
+                        border-radius: 10px;
+                        border-left: 5px solid #007BFF;
+                        white-space: pre-line;
+                    "><strong>📘 AI 피드백</strong><br>
+                    <span style="margin: 0;">{feedback_text}</span></div>
+                    <br>
                 """,
                 unsafe_allow_html=True
             )
-            st.write(" ")
     
     # 영어 일기 생성하기
     col1 = st.columns(1)[0]
@@ -231,3 +330,26 @@ def chat(timestamp):
         st.session_state.chat_history = []
         st.session_state.chat_turns = 0
         st.switch_page("main_front.py")
+
+# chatbot 메세지 디자인
+def chat1(message):
+    chat_html = f"""
+    <div class="chat1">
+        <span class="emoji">🤖</span>
+        <div class="perso-mess">{message}</div>
+    </div>
+    """
+    st.markdown(chat_html, unsafe_allow_html=True)
+
+
+# 사용자 메세지 디자인
+def chat2(message):
+    chat_html = f"""
+        <div class="chat2">
+            <div class="perso-mess">
+                {message}
+            </div>
+        <span class="emoji">🧑</span>
+        </div>
+        """
+    st.markdown(chat_html, unsafe_allow_html=True)

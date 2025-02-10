@@ -56,3 +56,36 @@ def naver_tts(input_json='extracted.json', output_folder='saves/voices'):
             print(f"Error processing sentence {idx}: {str(e)}")
 
     print("TTS 변환 완료!")
+
+def naver_tts_for_chat(text, output_folder='saves/voices', filename='response.mp3'):
+    """
+    네이버 TTS를 사용하여 입력된 문장을 음성 파일로 변환합니다.
+    """
+
+    os.makedirs(output_folder, exist_ok=True)
+
+    enc_text = urllib.parse.quote(text)
+    data = f"speaker=danna&volume=0&speed=0&pitch=0&format=mp3&text={enc_text}"
+    url = "https://naveropenapi.apigw.ntruss.com/tts-premium/v1/tts"
+
+    request = urllib.request.Request(url)
+    request.add_header("X-NCP-APIGW-API-KEY-ID", CLIENT_ID)
+    request.add_header("X-NCP-APIGW-API-KEY", CLIENT_SECRET)
+    
+    output_file = os.path.join(output_folder, filename)
+
+    try:
+        response = urllib.request.urlopen(request, data=data.encode('utf-8'))
+        rescode = response.getcode()
+
+        if rescode == 200:
+            with open(output_file, 'wb') as f:
+                f.write(response.read())
+            return output_file
+        else:
+            print(f"TTS 오류 발생: {rescode}")
+            return None
+            
+    except Exception as e:
+        print(f"TTS 요청 중 오류 발생: {str(e)}")
+        return None

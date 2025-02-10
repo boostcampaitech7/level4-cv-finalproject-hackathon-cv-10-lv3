@@ -166,22 +166,27 @@ def chat(timestamp):
             elif st.session_state.chat_history:
                 request_data = preset_text[len(preset_text) - 2]["content"]
             feedback_text = feedback(request_data, save=True, timestamp=timestamp)
-            
+
+            # 문자열 변환
+            feedback_text = feedback_text.strip()
+            feedback_text = feedback_text.replace("\n", "<br>")
+            feedback_text = feedback_text.replace("수정된 문장", "<span style='color: #007BFF; font-weight: bold;'>수정된 문장</span>")
+            feedback_text = feedback_text.replace("설명", "<span style='color: #007BFF; font-weight: bold;'>설명</span>")
+
             st.markdown(
                 f"""
-                <div style="
-                    background-color: #f0f8ff;
-                    padding: 15px;
-                    border-radius: 10px;
-                    border-left: 5px solid #007BFF;
-                ">
-                    <b>📘 AI 피드백</b><br>
-                    {feedback_text}
-                </div>
+                    <div style="
+                        background-color: #f0f8ff;
+                        padding: 15px;
+                        border-radius: 10px;
+                        border-left: 5px solid #007BFF;
+                        white-space: pre-line;
+                    "><strong>📘 AI 피드백</strong><br>
+                    <span style="margin: 0;">{feedback_text}</span></div>
+                    <br>
                 """,
                 unsafe_allow_html=True
             )
-            st.write(" ")
     
     # 영어 일기 생성하기
     col1 = st.columns(1)[0]

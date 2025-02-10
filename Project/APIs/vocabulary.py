@@ -19,7 +19,7 @@ def call_hcx(req,token):
             'seed': 0
         }
 
-    result = completion_executor.execute(request_data).strip()
+    result = completion_executor.execute(request_data)
     return result
 
 
@@ -37,10 +37,12 @@ def make_words(idx, sentence, timestamp):
         
         result=call_hcx(find_words, 300)    
         # 결과 정렬
-        lines = result.split(",")  # 줄 단위로 분리
-        for word in lines:
-            words.append(word.strip())
-            
+        if result != None:
+            lines = result.split(",")  # 줄 단위로 분리
+            for word in lines:
+                words.append(word)
+        else:
+            words=[]   
         if words==['']:
             words=[]
 

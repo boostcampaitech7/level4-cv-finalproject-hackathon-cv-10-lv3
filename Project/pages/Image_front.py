@@ -4,6 +4,11 @@ import os
 from datetime import datetime
 from ImageStudy.Study.Chat import chat
 from ImageStudy.Study.Diary import diary
+from streamlit_config import set_global_config
+from footer import footer
+
+# 글로벌 설정 호출
+set_global_config()
 
 # Step 상태 초기화
 if "current_step" not in st.session_state:
@@ -79,3 +84,5 @@ def main():
     
 if __name__ == "__main__":
     main()
+
+footer()  # footer 출력

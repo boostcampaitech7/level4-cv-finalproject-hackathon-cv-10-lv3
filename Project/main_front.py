@@ -1,6 +1,6 @@
 import streamlit as st
 import random
-from streamlit_config import set_global_config  # 설정 파일에서 설정을 가져오기
+from streamlit_config import set_global_config
 from footer import footer
 
 # 글로벌 설정 호출

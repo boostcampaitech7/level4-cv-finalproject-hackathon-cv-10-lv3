@@ -4,7 +4,7 @@ import streamlit as st
 from APIs.image_alt import img_alt
 from APIs.HCXexecutor import CompletionExecutor
 from APIs.user_input import userInput
-from APIs.feedback import feedback
+from APIs.feedback import feedback, feedback_review
 from APIs.summary import generate_diary
 from APIs.clova_voice import naver_tts_for_chat
 from ImageStudy.Study.Diary import diary
@@ -52,6 +52,21 @@ def chat(timestamp):
         st.session_state.current_step = 3
 
     if st.session_state.Chat_is_finished:
+        review_text = feedback_review(timestamp)
+        st.markdown(
+                f"""
+                <div style="
+                    background-color: #f0f8ff;
+                    padding: 15px;
+                    border-radius: 10px;
+                    border-left: 5px solid #007BFF;
+                ">
+                    <b>📘 Review</b><br>
+                    {review_text}
+                </div>
+                """,
+                unsafe_allow_html=True
+            )
         st.success("🎉 학습이 종료되었습니다. 오늘도 수고하셨습니다!")
         return
     

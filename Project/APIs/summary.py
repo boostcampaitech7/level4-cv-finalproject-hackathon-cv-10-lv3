@@ -51,5 +51,3 @@ def generate_diary(chat_history, timestamp):
     
     print("Diary saved.")
     return diary_text
-
-generate_diary

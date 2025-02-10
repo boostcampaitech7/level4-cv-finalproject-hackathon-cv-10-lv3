@@ -1,7 +1,7 @@
 import streamlit as st
 import os
 import time
-from APIs.feedback import feedback
+from APIs.feedback import feedback, feedback_review
 
 def diary(timestamp):
     st.title("📖 Diary Mode")
@@ -22,6 +22,21 @@ def diary(timestamp):
         
     # 학습 종료 상태 처리
     if st.session_state.Diary_is_finished:
+        review_text = feedback_review(timestamp)
+        st.markdown(
+                f"""
+                <div style="
+                    background-color: #f0f8ff;
+                    padding: 15px;
+                    border-radius: 10px;
+                    border-left: 5px solid #007BFF;
+                ">
+                    <b>📘 Review</b><br>
+                    {review_text}
+                </div>
+                """,
+                unsafe_allow_html=True
+            )
         st.success("🎉 학습이 종료되었습니다. 오늘도 수고하셨습니다!")
         return  # 학습이 완전히 종료되었으므로 더 이상 실행하지 않음
     

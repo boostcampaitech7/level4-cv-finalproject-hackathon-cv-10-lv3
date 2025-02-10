@@ -33,3 +33,22 @@ def feedback(text, save=False, timestamp=0):
         print("Feedback saved.")
 
     return feedback_text if feedback_text else "사용자가 많아 요청을 처리할 수 없습니다. 다시 시도해주세요."
+
+def feedback_review(timestamp):
+    completion_executor = CompletionExecutor()
+    feedback_path = f'saves/feedbacks/{timestamp}.txt'
+
+    preset_text = [{"role":"system","content":"당신은 영어 선생님입니다. 사용자가 오늘 영어 학습을 하며 받은 피드백들이 input으로 들어옵니다. 내용 중 영어 학습, 문법, 표현적으로 가장 중요한 피드백 하나를 고르고, 사용자가 복습할 수 있도록 설명과 예문을 작성하시오. 초등학생 선생님처럼 친절한 말투로 대답하시오."},{"role":"user","content":feedback_path}]
+    request_data = {
+                'messages': preset_text,
+                'topP': 0.8,
+                'topK': 0,
+                'maxTokens': 300,
+                'temperature': 0.5,
+                'repeatPenalty': 5.0,
+                'stopBefore': [],
+                'includeAiFilters': True,
+                'seed': 0
+            }
+    feedback_text = completion_executor.execute(request_data)
+    return feedback_text

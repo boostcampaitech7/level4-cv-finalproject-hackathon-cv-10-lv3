@@ -3,7 +3,7 @@ from datetime import datetime
 from PIL import Image, ImageOps
 import math
 import time
-from APIs.clova_OCR import OCR
+from APIs.clova_OCR import OCR, OCR2
 from APIs.translation import translation
 from APIs.clova_voice import naver_tts
 from APIs.rotate import ProcessFile
@@ -139,6 +139,9 @@ def main():
         with st.spinner("OCR을 수행 중입니다..."):
             OCR_result = OCR(st.session_state.image_path, st.session_state.timestamp)  # image_path 사용
         if OCR_result!='success':
+            with st.spinner("OCR을 수행 중입니다..."):
+                OCR_result = OCR2(st.session_state.image_path, st.session_state.timestamp)
+        if  OCR_result!='success':
             st.error("⚠️ Text 인식에 실패했습니다. 다른 이미지를 사용해주세요. 메인화면으로 돌아갑니다.")  # 팝업 메시지 표시
             time.sleep(3)
             st.session_state.current_step = 1

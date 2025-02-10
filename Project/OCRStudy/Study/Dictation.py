@@ -1,8 +1,10 @@
 import os
 import json
+import random
 import streamlit as st
 from APIs.clova_voice import naver_tts
 from APIs.user_input import userInput
+from APIs.easy_mode import easymode
 
 def dictation_mode(timestamp, voice_folder='saves/voices'):
     input_json = f'saves/save2_extracted{timestamp}.json'
@@ -23,6 +25,7 @@ def dictation_mode(timestamp, voice_folder='saves/voices'):
         st.session_state.Dictation_selected_sentence_idx = None
         st.session_state.Dictation_change_mode = False
         st.session_state.Dictation_is_finished = False
+        st.session_state.Easy_Hard = "Hard"
         
     # 상태 초기화
     if "Dictation_selected_sentence_idx" not in st.session_state:
@@ -31,7 +34,9 @@ def dictation_mode(timestamp, voice_folder='saves/voices'):
         st.session_state.Dictation_change_mode = False  
     if "Dictation_is_finished" not in st.session_state:
         st.session_state.Dictation_is_finished = False
-    
+    if "Easy_Hard" not in st.session_state:
+        st.session_state.Easy_Hard = "Hard"
+
     if "current_step" in st.session_state:
         st.session_state.current_step = 5  # 학습 모드 선택 화면이 다시 안 뜨도록 함
     
@@ -45,6 +50,27 @@ def dictation_mode(timestamp, voice_folder='saves/voices'):
     if st.session_state.Dictation_selected_sentence_idx is None:
         sentence_list = [f"{idx+1}. {sentence}" for idx, sentence in enumerate(sentences)]
         
+        # 이지모드/하드모드 선택
+        st.markdown("### 현재 난이도:")
+        if st.session_state.Easy_Hard == "Easy":
+            st.markdown("### EASY")
+        elif st.session_state.Easy_Hard == "Nomal":
+            st.markdown("### Nomal")
+        else:
+            st.markdown("### HARD")
+        col1, col2, col3= st.columns(3)
+        with col1:
+            if st.button("EASY 모드로 실행"):
+                st.session_state.Easy_Hard = "Easy"
+                st.rerun()
+        with col2:
+            if st.button("NOMAL 모드로 실행"):
+                st.session_state.Easy_Hard = "Nomal"
+                st.rerun()
+        with col3:
+            if st.button("HARD 모드로 실행"):
+                st.session_state.Easy_Hard = "Hard"
+                st.rerun()
         # Markdown으로 출력
         st.markdown("### 문장 목록:")
         st.markdown("\n".join(sentence_list))
@@ -77,15 +103,22 @@ def dictation_mode(timestamp, voice_folder='saves/voices'):
         
         # 사용자 입력
         st.markdown("### 문장에 대해 Dictation을 작성하세요.")
+        if st.session_state.Easy_Hard=="Easy":
+            hint=easymode(selected_sentence)
+            st.write(hint)
+            st.markdown("📌 빈칸을 채워봅시다.")
+        elif st.session_state.Easy_Hard=="Nomal":
+            words = selected_sentence.split()
+            random.shuffle(words)
+            st.write(f"**{', '.join(words)}**")
+            st.markdown("📌 순서를 맞춰봅시다.")
         user_input_text = userInput()
         col1 = st.columns(1)[0]
         with col1:
             if st.button("Send"):
                 st.write("**Original Sentence:**", selected_sentence)
                 st.write("**Your Input:**", user_input_text)
-                # 번역 보기 버튼
-                if st.button("🌍 번역 보기"):
-                    st.write(translation[st.session_state.Dictation_selected_sentence_idx]["translation"])
+                st.write("**Translated Sentence:**", translation[st.session_state.Dictation_selected_sentence_idx]["translation"])
 
 
         # 버튼 기반 작업

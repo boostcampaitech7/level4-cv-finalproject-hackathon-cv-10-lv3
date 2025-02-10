@@ -11,11 +11,11 @@ def footer():
             background-color: rgba(255, 255, 255, 0);  /* 투명한 배경 */
             text-align: left;
             padding: 10px;
-            color: white;
+            color: black;
         }
         </style>
         <div class="footer">
-            <p>© Naver Boostcourse AI Tech 7th Team Medvision. All rights reserved.</p>
+            <p>© Naver Boostcourse AI Tech 7th Team 33.3. All rights reserved.</p>
         </div>
         """,
         unsafe_allow_html=True

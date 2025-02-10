@@ -122,9 +122,24 @@ def writing_mode(timestamp):
         
                 # ✅ 피드백 버튼
                 # 피드백도 saves 폴더에 feedback으로 저장해둬서 feedback 누를 때마다 바뀌지 않도록 수정 # 비즈니스 관점으로 볼 때 request를 한 번만 보내는게 좋음 속도측면으로도
-                if st.button("💬 피드백 받기", use_container_width=True):
+                if st.button("🧑‍🏫 AI 튜터의 피드백 확인하기", use_container_width=True):
                     feedback_message = feedback(user_answer)
-                    st.write("**Feedback:**", feedback_message)
+                    
+                    st.markdown(
+                        f"""
+                        <div style="
+                            background-color: #f0f8ff;
+                            padding: 15px;
+                            border-radius: 10px;
+                            border-left: 5px solid #007BFF;
+                        ">
+                            <b>📘 AI 피드백</b><br>
+                            {feedback_message}
+                        </div>
+                        """,
+                        unsafe_allow_html=True
+                    )
+                    st.write(" ")
         
         # 버튼 기반 작업
         col1, col2, col3 = st.columns(3)

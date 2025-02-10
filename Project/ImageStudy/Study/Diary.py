@@ -55,7 +55,7 @@ def diary(timestamp):
     if st.button("🧑‍🏫 AI 튜터의 피드백 확인하기", use_container_width=True):
         if diary_text:
             request_text = diary_text.replace('\n', ' ')
-            feedback_response = feedback(request_text)  # AI 피드백 생성
+            feedback_response = feedback(request_text, save=True, timestamp=timestamp)  # AI 피드백 생성
             st.markdown(
                 f"""
                 <div style="

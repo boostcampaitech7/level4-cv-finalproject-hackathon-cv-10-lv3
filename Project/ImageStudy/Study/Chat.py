@@ -147,10 +147,10 @@ def chat(timestamp):
     with col1:
         if st.button("🧑‍🏫 AI 튜터의 피드백 확인하기", use_container_width=True):
             if user_input:
-                feedback_text = feedback(user_input)
+                request_data = user_input
             elif st.session_state.chat_history:
-                last_user_response = preset_text[len(preset_text) - 2]["content"]
-                feedback_text = feedback(last_user_response)
+                request_data = preset_text[len(preset_text) - 2]["content"]
+            feedback_text = feedback(request_data, save=True, timestamp=timestamp)
             
             st.markdown(
                 f"""

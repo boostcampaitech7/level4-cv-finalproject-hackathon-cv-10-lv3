@@ -8,6 +8,7 @@ from APIs.feedback import feedback, feedback_review
 from APIs.summary import generate_diary
 from APIs.clova_voice import naver_tts_for_chat
 from ImageStudy.Study.Diary import diary
+from collections import deque
 
 MAX_TURNS = 11  # 대화 횟수 제한
 
@@ -23,7 +24,7 @@ def chat(timestamp):
         st.session_state.Chat_change_mode = False
         st.session_state.Chat_is_finished = False
         st.session_state.retry = False
-        st.session_state.chat_history = []
+        st.session_state.chat_history = deque()
         st.session_state.chat_turns = 0
         st.session_state.preset_text = [
             {"role":"system","content":"사용자의 가장 처음 입력으로 이미지의 대체 텍스트가 들어옵니다. 시스템은 해당 설명을 바탕으로 이미지를 보고 친구와 이야기하는 것처럼 대화를 시작합니다. 이미지는 사용자가 오늘 보낸 하루와 관련이 있습니다. 적절한 질문을 제시하고, 사용자의 답변에 반응하시오. 대화는 영어로 진행합니다. 줄바꿈을 사용하지 말고 한 문단으로 대화하시오."},
@@ -36,7 +37,7 @@ def chat(timestamp):
     if "Chat_is_finished" not in st.session_state:
         st.session_state.Chat_is_finished = False
     if "chat_history" not in st.session_state:
-        st.session_state.chat_history = []
+        st.session_state.chat_history = deque()
     if "chat_turns" not in st.session_state:
         st.session_state.chat_turns = 0
     if "retry" not in st.session_state:

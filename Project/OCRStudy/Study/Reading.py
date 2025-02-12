@@ -93,9 +93,9 @@ def reading(timestamp, voice_folder='saves/voices'):
                             result=item
                             break
                         else:
-                            result=make_words(idx, current_sentence, timestamp)
+                            result=make_words(idx, current_sentence)
             else:
-                result=make_words(idx, current_sentence, timestamp)
+                result=make_words(idx, current_sentence)
                 data=[]
             
             dictionary =result["words"]

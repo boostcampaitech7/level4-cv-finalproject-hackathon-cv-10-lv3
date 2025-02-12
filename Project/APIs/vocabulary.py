@@ -12,7 +12,7 @@ def call_hcx(req,token):
             'topP': 0.8,
             'topK': 0,
             'maxTokens': token,
-            'temperature': 0.3,
+            'temperature': 0.25,
             'repeatPenalty': 3.0,
             'stopBefore': ['###'],
             'includeAiFilters': True,
@@ -23,10 +23,7 @@ def call_hcx(req,token):
     return result
 
 
-def make_words(idx, sentence, timestamp):
-    # 번역할 JSON 파일 경로
-    output_file = f"saves/save5_words{timestamp}.json"
-
+def make_words(idx, sentence):
     word_list = []
     words=[]
     cnt=0
@@ -55,8 +52,16 @@ def make_words(idx, sentence, timestamp):
 
             if word=='' or word[0].isupper(): # 빈문자인 경우 
                 continue
-
-            meaning=translate_by_papago(word) #papago
+            
+            find_mean= [{"role":"system",
+                            "content":f"- 입력 단어: {word} - 입력 단어의 뜻을 출력합니다. -뜻만 출력합니다."}]
+            meaning=''
+            cnt=0
+            while(meaning==''):
+                meaning=call_hcx(find_mean, 500)
+                cnt+=1
+                if cnt==5:
+                    meaning=translate_by_papago(word) #papago
 
             find_example= [{"role":"system",
                             "content":f"- 입력 단어: {word} - 입력 단어의 영어 예문을 하나 작성합니다. -예문만 출력합니다."}]
@@ -69,7 +74,17 @@ def make_words(idx, sentence, timestamp):
                     example='예문이 없습니다.'
 
             if example !='예문이 없습니다.':
-                translate=translate_by_papago(example) #papago
+                print(example)
+                find_trans= [{"role":"system",
+                            "content":f"- 입력 문장: {example} - 입력 문장을 번역합니다. -번역문만 출력합니다."}]
+                translate=''
+                cnt=0
+                while(translate==''):
+                    translate=call_hcx(find_trans, 500)
+                    cnt+=1
+                    if cnt==5:
+                        translate=translate_by_papago(example) #papago
+                
                 word_list.append({"word":word,
                               "mean":meaning,
                               "example":example,

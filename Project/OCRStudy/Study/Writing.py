@@ -7,9 +7,8 @@ from APIs.user_input import userInput
 from APIs.easy_mode import easymode
 
 def writing_mode(timestamp):
-    input_json = f"saves/save2_extracted{timestamp}.json"
     output_json = f"saves/save3_translation{timestamp}.json"
-
+    easy_json = f"saves/save4_easy{timestamp}.json"
     st.title("Writing Mode")
     
     # ✅ 학습을 새로 시작할 때 상태 초기화
@@ -41,7 +40,7 @@ def writing_mode(timestamp):
     if not os.path.exists(output_json):
         st.error(f"{output_json} 파일이 존재하지 않습니다.")
         return
-
+    
     with open(output_json, "r", encoding="utf-8") as f:
         translations = json.load(f)
     
@@ -86,17 +85,36 @@ def writing_mode(timestamp):
     else:
         selected_translation = translations[st.session_state.Writing_selected_sentence_idx]
         original_sentences = translations[st.session_state.Writing_selected_sentence_idx]["original"]
+        selected_idx=st.session_state.Writing_selected_sentence_idx
         st.markdown(f"##### 선택된 문장: \n {selected_translation['translation']}")
 
         # 유해성 경고 문구
-        harmful_score  = translations[st.session_state.Writing_selected_sentence_idx]["harmful_score"]
+        harmful_score  = translations[selected_idx]["harmful_score"]
         if harmful_score<=4:
             st.error("⚠️ 학습에 부적절한 내용을 포함하고 있습니다.") 
 
         if st.session_state.Easy_Hard=="Easy":
-            hint=easymode(original_sentences)
+            if os.path.exists(easy_json):
+                with open(easy_json, "r", encoding="utf-8") as f:
+                    data = json.load(f)
+                    if str(selected_idx) in data:
+                        hint=data[str(selected_idx)]
+                    else:
+                        hint=easymode(original_sentences)
+            else:
+                hint=easymode(original_sentences)
+                data={}
+            #힌트 출력
             st.write(hint)
             st.markdown("📌 빈칸을 채워봅시다.")
+
+            # 새 데이터를 리스트에 추가
+            data[str(selected_idx)]=hint
+
+            # JSON 파일에 저장
+            with open(easy_json, "w", encoding="utf-8") as f:
+                json.dump(data, f, ensure_ascii=False, indent=4)
+            
         elif st.session_state.Easy_Hard=="Nomal":
             words = original_sentences.split()
             random.shuffle(words)

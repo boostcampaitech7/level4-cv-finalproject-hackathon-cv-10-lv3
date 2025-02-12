@@ -9,6 +9,7 @@ from APIs.easy_mode import easymode
 def dictation_mode(timestamp, voice_folder='saves/voices'):
     input_json = f'saves/save2_extracted{timestamp}.json'
     translation_path = f'saves/save3_translation{timestamp}.json'
+    easy_json = f"saves/save4_easy{timestamp}.json"
     voice_folder='saves/voices'
     st.title("Dictation Mode")
     
@@ -85,9 +86,9 @@ def dictation_mode(timestamp, voice_folder='saves/voices'):
     # ✅ 문장이 선택된 경우, 리스트를 숨기고 음성 출력 + 받아쓰기 진행
     else:
         selected_sentence = sentences[st.session_state.Dictation_selected_sentence_idx]
-        
+        selected_idx=st.session_state.Dictation_selected_sentence_idx
         # 음성 재생
-        voice_file = os.path.join(voice_folder, f"voice_{st.session_state.Dictation_selected_sentence_idx + 1}.mp3")
+        voice_file = os.path.join(voice_folder, f"voice_{selected_idx + 1}.mp3")
         if not os.path.exists(voice_file):
             naver_tts(input_json=input_json, output_folder=voice_folder)
         
@@ -97,16 +98,34 @@ def dictation_mode(timestamp, voice_folder='saves/voices'):
             st.error("음성 파일 생성에 실패했습니다.")
         
         # 유해성 경고 문구
-        harmful_score  = translation[st.session_state.Dictation_selected_sentence_idx]["harmful_score"]
+        harmful_score  = translation[selected_idx]["harmful_score"]
         if harmful_score<=4:
             st.error("⚠️ 학습에 부적절한 내용을 포함하고 있습니다.") 
         
         # 사용자 입력
         st.markdown("### 문장에 대해 Dictation을 작성하세요.")
         if st.session_state.Easy_Hard=="Easy":
-            hint=easymode(selected_sentence)
+            if os.path.exists(easy_json):
+                with open(easy_json, "r", encoding="utf-8") as f:
+                    data = json.load(f)
+                    if str(selected_idx) in data:
+                        hint=data[str(selected_idx)]
+                    else:
+                        hint=easymode(selected_sentence)
+            else:
+                hint=easymode(selected_sentence)
+                data={}
+            #힌트 출력
             st.write(hint)
             st.markdown("📌 빈칸을 채워봅시다.")
+
+            # 새 데이터를 리스트에 추가
+            data[str(selected_idx)]=hint
+
+            # JSON 파일에 저장
+            with open(easy_json, "w", encoding="utf-8") as f:
+                json.dump(data, f, ensure_ascii=False, indent=4)
+
         elif st.session_state.Easy_Hard=="Nomal":
             words = selected_sentence.split()
             random.shuffle(words)
@@ -118,7 +137,7 @@ def dictation_mode(timestamp, voice_folder='saves/voices'):
             if st.button("Send"):
                 st.write("**Original Sentence:**", selected_sentence)
                 st.write("**Your Input:**", user_input_text)
-                st.write("**Translated Sentence:**", translation[st.session_state.Dictation_selected_sentence_idx]["translation"])
+                st.write("**Translated Sentence:**", translation[selected_idx]["translation"])
 
 
         # 버튼 기반 작업

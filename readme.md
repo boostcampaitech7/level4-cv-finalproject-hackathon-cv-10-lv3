@@ -42,6 +42,10 @@ venv\Scripts\activate  # Windows
 ```
 ➡️ 필요한 패키지 설치
 ```
+ffmpeg 설치는 별도로 진행
+apt install ffmpeg
+```
+```
 pip install -r requirements.txt
 ```
 

@@ -1,4 +1,3 @@
-apt install ffmpeg
-pip install streamlit-mic-recorder
-pip install streamlit
-pip install transformers
+streamlit-mic-recorder
+streamlit
+transformers
